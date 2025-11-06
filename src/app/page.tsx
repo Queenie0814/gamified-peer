@@ -1,11 +1,11 @@
 // src/app/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams /* , useRouter */ } from 'next/navigation';
 import CryptoJS from 'crypto-js';
 
-export default function Home() {
+const HomeContent = () => {
   const searchParams = useSearchParams();
   // const router = useRouter();
   const [status, setStatus] = useState('');
@@ -114,5 +114,13 @@ export default function Home() {
     <div>
       <h1>{status}</h1>
     </div>
+  );
+};
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>載入中...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
