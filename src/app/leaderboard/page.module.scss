@@ -44,8 +44,9 @@
 
 .group {
   margin-top: 32px;
+  min-height: 150px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   column-gap: 24px;
 
@@ -53,6 +54,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-self: flex-end;
 
     &.first {
       > .avatar {
@@ -158,19 +160,58 @@
 
 .personal {
   margin-top: 24px;
+  min-height: 200px;
   padding: 32px 16px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   row-gap: 12px;
   border-radius: 24px;
   background-color: #f2ad4e;
 
-  > div {
+  > .separator {
+    padding: 12px 0;
+    text-align: center;
+    color: rgba($color: #8b4513, $alpha: 0.6);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 8px;
+  }
+
+  > .item {
     padding: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     background-color: rgba($color: white, $alpha: 0.8);
+    transition: all 0.3s ease;
+
+    &.highlight {
+      background-color: #ffed6d;
+      box-shadow: 0 0 20px rgba(255, 237, 109, 0.6);
+      transform: scale(1.02);
+    }
+
+    &.first {
+      > .info {
+        > .rank {
+          position: relative;
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -20px;
+            width: 40px;
+            height: 40px;
+            background-image: url('/crown.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+          }
+        }
+      }
+    }
 
     > .info {
       display: flex;
