@@ -228,8 +228,8 @@ const HomeContent = () => {
 
   // 解密函數
   const decryptSurveyData = (encryptedData: string): string => {
-    const hashKey = 'a194f94ed8aa6875';
-    const ivKey = '710a88927e935676';
+    const hashKey = '0a11beefaa02dac4';
+    const ivKey = 'e836c6f0b112b736';
 
     try {
       const key = CryptoJS.enc.Utf8.parse(hashKey);
