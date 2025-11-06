@@ -189,6 +189,7 @@ const HomeContent = () => {
       // 4. 在 surveyData 中添加新欄位
       const enhancedSurveyData = {
         ...surveyData,
+        submit_time: dayjs(surveyData.submitTime).format('YYYY-MM-DD HH:mm:ss'),
         personalScore,
         totalScore,
       };
