@@ -49,9 +49,7 @@ const HomeContent = () => {
 
       // 2. 在前端解密資料
       const decryptedData = decryptSurveyData(encryptedData);
-      const surveyData = JSON.parse(decryptedData);
-
-      console.log('result:', surveyData);
+      console.log('decryptedData:', decryptedData);
 
       // 3. POST 解密後的資料到 Google Apps Script
       // const saveResponse = await fetch(APPS_SCRIPT_URL, {
@@ -102,7 +100,8 @@ const HomeContent = () => {
       if (!decryptedText) {
         throw new Error('解密結果為空，請檢查金鑰是否正確');
       }
-
+      
+      console.log('解密成功:', decryptedText);
       return decryptedText;
     } catch (error) {
       console.error('解密失敗:', error);
