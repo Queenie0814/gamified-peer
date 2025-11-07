@@ -1,8 +1,6 @@
 // src/app/page.tsx
 'use client';
 
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import CryptoJS from 'crypto-js';
@@ -10,8 +8,6 @@ import dayjs from 'dayjs';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 // SurveyCake 資料型別定義
 interface SurveyResult {
@@ -184,7 +180,6 @@ const HomeContent = () => {
       // 2. 在前端解密資料
       const decryptedData = decryptSurveyData(encryptedData);
       const surveyData = JSON.parse(decryptedData) as SurveyData;
-
       setStatus('正在計算積分...');
 
       // 3. 計算積分
@@ -194,7 +189,7 @@ const HomeContent = () => {
       // 4. 在 surveyData 中添加新欄位
       const enhancedSurveyData = {
         ...surveyData,
-        submit_time: dayjs(surveyData.submitTime).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm:ss'),
+        submit_time: dayjs(surveyData.submitTime).add(8, 'hour').format('YYYY-MM-DD HH:mm:ss'),
         personalScore,
         totalScore,
       };
