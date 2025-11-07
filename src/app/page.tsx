@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-
 // SurveyCake 資料型別定義
 interface SurveyResult {
   subject: string;
@@ -80,45 +79,63 @@ const HomeContent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, processed]);
 
-// 積分計算函數
-const calculatePersonalScore = (surveyData: SurveyData): number => {
-  let score = 10; // 基本分數：完成每組評分 +10分
+  // 輔助函數：從結果中取得分數
+  const getScoreFromResults = (results: SurveyResult[], keyword: string, alias?: string): number => {
+    if (alias) {
+      const item = results.find((item) => item.alias === alias);
+      return parseInt(item?.answer?.[0] || '0') || 0;
+    }
 
-  // 從 result 陣列中找到對應的答案
-  const results = surveyData.result;
+    const item = results.find((item) => item.subject.includes(keyword) && item.type === 'NESTCHILD');
+    return parseInt(item?.answer?.[0] || '0') || 0;
+  };
 
-  // 尋找各個欄位的答案
-  const advantage = results.find((item) => item.alias === 'advantage')?.answer?.[0] || '';
-  const suggest = results.find((item) => item.alias === 'suggest')?.answer?.[0] || '';
-  const skillReflection = results.find((item) => item.alias === 'skill_reflection')?.answer?.[0] || '';
-  const cognitiveReflection = results.find((item) => item.alias === 'cognitive_reflection')?.answer?.[0] || '';
+  // 輔助函數：從結果中取得文字答案
+  const getAnswerFromResults = (results: SurveyResult[], alias: string): string => {
+    const item = results.find((item) => item.alias === alias);
+    return item?.answer?.[0] || '';
+  };
 
-  // 優質回饋積分計算 (advantage, suggest) - 平均計算
-  const feedbackTexts = [advantage, suggest];
-  const averageFeedbackLength = feedbackTexts.reduce((sum, text) => sum + text.length, 0) / feedbackTexts.length;
+  // 積分計算函數
+  const calculatePersonalScore = (surveyData: SurveyData): number => {
+    let score = 10; // 基本分數：完成每組評分 +10分
 
-  if (averageFeedbackLength >= 40) {
-    score += 25;
-  } else if (averageFeedbackLength >= 30) {
-    score += 20;
-  } else if (averageFeedbackLength >= 20) {
-    score += 15;
-  }
+    // 從 result 陣列中找到對應的答案
+    const results = surveyData.result;
 
-  // 深度反思積分計算 (skill_reflection, cognitive_reflection) - 平均計算
-  const reflectionTexts = [skillReflection, cognitiveReflection];
-  const averageReflectionLength = reflectionTexts.reduce((sum, text) => sum + text.length, 0) / reflectionTexts.length;
+    // 尋找各個欄位的答案
+    const advantage = results.find((item) => item.alias === 'advantage')?.answer?.[0] || '';
+    const suggest = results.find((item) => item.alias === 'suggest')?.answer?.[0] || '';
+    const skillReflection = results.find((item) => item.alias === 'skill_reflection')?.answer?.[0] || '';
+    const cognitiveReflection = results.find((item) => item.alias === 'cognitive_reflection')?.answer?.[0] || '';
 
-  if (averageReflectionLength >= 40) {
-    score += 25;
-  } else if (averageReflectionLength >= 30) {
-    score += 20;
-  } else if (averageReflectionLength >= 20) {
-    score += 15;
-  }
+    // 優質回饋積分計算 (advantage, suggest) - 平均計算
+    const feedbackTexts = [advantage, suggest];
+    const averageFeedbackLength = feedbackTexts.reduce((sum, text) => sum + text.length, 0) / feedbackTexts.length;
 
-  return score;
-};
+    if (averageFeedbackLength >= 40) {
+      score += 25;
+    } else if (averageFeedbackLength >= 30) {
+      score += 20;
+    } else if (averageFeedbackLength >= 20) {
+      score += 15;
+    }
+
+    // 深度反思積分計算 (skill_reflection, cognitive_reflection) - 平均計算
+    const reflectionTexts = [skillReflection, cognitiveReflection];
+    const averageReflectionLength =
+      reflectionTexts.reduce((sum, text) => sum + text.length, 0) / reflectionTexts.length;
+
+    if (averageReflectionLength >= 40) {
+      score += 25;
+    } else if (averageReflectionLength >= 30) {
+      score += 20;
+    } else if (averageReflectionLength >= 20) {
+      score += 15;
+    }
+
+    return score;
+  };
 
   // 概念圖總分計算函數
   const calculateTotalScore = (surveyData: SurveyData): number => {
@@ -193,14 +210,29 @@ const calculatePersonalScore = (surveyData: SurveyData): number => {
 
       setStatus('正在儲存資料...');
 
-      // 5. 透過 API Route 儲存到 Google Apps Script
-      const saveResponse = await fetch('/api/save-survey', {
+      // 5. 透過 API Route 儲存到資料庫
+      const saveResponse = await fetch('/api/survey', {
+        // 改為你的新 API
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          surveyData: enhancedSurveyData,
+          student_id: surveyData.alias.student_id?.[0] || '',
+          student_name: surveyData.alias.student_name?.[0] || '',
+          group: surveyData.alias.group?.[0] || '',
+          completeness: getScoreFromResults(surveyData.result, '完整性'),
+          accuracy: getScoreFromResults(surveyData.result, '準確性'),
+          richness: getScoreFromResults(surveyData.result, '豐富度'),
+          referability: getScoreFromResults(surveyData.result, '參考價值'),
+          concept_map_total_score: totalScore,
+          advantage: getAnswerFromResults(surveyData.result, 'advantage'),
+          suggest: getAnswerFromResults(surveyData.result, 'suggest'),
+          skill_reflection: getAnswerFromResults(surveyData.result, 'skill_reflection'),
+          cognitive_reflection: getAnswerFromResults(surveyData.result, 'cognitive_reflection'),
+          recommend: getScoreFromResults(surveyData.result, 'recommend', 'recommend'),
+          personal_score: personalScore,
+          submit_time: enhancedSurveyData.submit_time,
         }),
       });
 

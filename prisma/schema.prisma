@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SurveyResponse {
+  id                     Int      @id @default(autoincrement())
+  studentId              String   @map("student_id")
+  studentName            String   @map("student_name")
+  groupName              String   @map("group_name")
+  completeness           Int
+  accuracy               Int
+  richness               Int
+  referability           Int
+  conceptMapTotalScore   Int      @map("concept_map_total_score")
+  advantage              String
+  suggest                String
+  skillReflection        String   @map("skill_reflection")
+  cognitiveReflection    String   @map("cognitive_reflection")
+  recommend              Int
+  personalScore          Int      @map("personal_score")
+  submitTime             DateTime @map("submit_time")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  @@map("survey_responses")
+  @@index([studentId])
+  @@index([groupName])
+  @@index([submitTime])
+}

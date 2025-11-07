@@ -1,43 +1,157 @@
-// src/app/api/get-leaderboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-
-const APPS_SCRIPT_GET_URL =
-  'https://script.google.com/macros/s/AKfycbwxMKYsueSJ0LgUGrQII5ZhjhzX_sIFIi5AF90C6D5vlCQEwahHHHsWRrXlM47JrTVS/exec';
+import { prisma } from '@/lib/prisma';
+import dayjs from 'dayjs';
 
 export async function GET(request: NextRequest) {
   try {
-    // 從 URL 中取得 query parameters
     const searchParams = request.nextUrl.searchParams;
     const studentId = searchParams.get('student_id');
     const date = searchParams.get('date');
 
-    // 建立完整的 URL（包含 query parameters）
-    let url = APPS_SCRIPT_GET_URL;
-    if (studentId) {
-      url += `?student_id=${studentId}`;
-    }
+    // 設定日期範圍
+    let startDate: Date;
+    let endDate: Date;
 
     if (date) {
-      url += studentId ? `&date=${date}` : `?date=${date}`;
+      startDate = dayjs(date).startOf('day').toDate();
+      endDate = dayjs(date).endOf('day').toDate();
+    } else {
+      // 沒有提供日期則使用今天
+      startDate = dayjs().startOf('day').toDate();
+      endDate = dayjs().endOf('day').toDate();
     }
 
-    console.log('呼叫 Google Apps Script:', url);
-
-    // 呼叫 Google Apps Script
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    // 查詢當日的所有有效資料
+    const validRecords = await prisma.surveyResponse.findMany({
+      where: {
+        submitTime: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      orderBy: {
+        submitTime: 'desc',
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // 1. 計算組別排行榜 (使用概念圖總分)
+    const groupScores: Record<string, number> = {};
+
+    validRecords.forEach((record) => {
+      const group = record.groupName.trim();
+      if (!groupScores[group]) {
+        groupScores[group] = 0;
+      }
+      groupScores[group] += record.conceptMapTotalScore;
+    });
+
+    const groupList = Object.entries(groupScores)
+      .map(([group, total_score]) => ({
+        group,
+        total_score,
+      }))
+      .sort((a, b) => b.total_score - a.total_score);
+
+    // 2. 計算個人積分總和
+    const studentScores: Record<
+      string,
+      {
+        student_name: string;
+        student_id: string;
+        score: number;
+      }
+    > = {};
+
+    validRecords.forEach((record) => {
+      const id = record.studentId.trim();
+      if (!studentScores[id]) {
+        studentScores[id] = {
+          student_name: record.studentName,
+          student_id: id,
+          score: 0,
+        };
+      }
+      studentScores[id].score += record.personalScore;
+    });
+
+    // 3. 取得個人前五名
+    const personalList = Object.values(studentScores)
+      .filter((person) => person.student_name && person.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    // 4. 取得特定學生的資訊
+    let personalInfo = {
+      student_name: '',
+      student_id: '',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      records: [] as any[],
+    };
+
+    if (studentId) {
+      const studentRecords = validRecords.filter((record) => record.studentId.trim() === studentId.trim());
+
+      if (studentRecords.length > 0) {
+        // 將資料格式轉換成前端期望的格式
+        const formattedRecords = studentRecords.map((record) => ({
+          student_id: record.studentId,
+          student_name: record.studentName,
+          group: record.groupName,
+          completeness: record.completeness,
+          accuracy: record.accuracy,
+          richness: record.richness,
+          referability: record.referability,
+          concept_map_total_score: record.conceptMapTotalScore,
+          advantage: record.advantage,
+          suggest: record.suggest,
+          skill_reflection: record.skillReflection,
+          cognitive_reflection: record.cognitiveReflection,
+          recommend: record.recommend,
+          personal_score: record.personalScore,
+          submit_time: record.submitTime.toISOString(),
+        }));
+
+        personalInfo = {
+          student_name: studentRecords[0].studentName,
+          student_id: studentId,
+          records: formattedRecords,
+        };
+      }
+    } else if (personalList.length > 0) {
+      // 如果沒有指定學生，回傳第一名的資料
+      const topStudentId = personalList[0].student_id;
+      const topStudentRecords = validRecords.filter((record) => record.studentId.trim() === topStudentId);
+
+      const formattedRecords = topStudentRecords.map((record) => ({
+        student_id: record.studentId,
+        student_name: record.studentName,
+        group: record.groupName,
+        completeness: record.completeness,
+        accuracy: record.accuracy,
+        richness: record.richness,
+        referability: record.referability,
+        concept_map_total_score: record.conceptMapTotalScore,
+        advantage: record.advantage,
+        suggest: record.suggest,
+        skill_reflection: record.skillReflection,
+        cognitive_reflection: record.cognitiveReflection,
+        recommend: record.recommend,
+        personal_score: record.personalScore,
+        submit_time: record.submitTime.toISOString(),
+      }));
+
+      personalInfo = {
+        student_name: personalList[0].student_name,
+        student_id: topStudentId,
+        records: formattedRecords,
+      };
     }
 
-    const data = await response.json();
-
-    return NextResponse.json(data);
+    return NextResponse.json({
+      groupList,
+      personalList,
+      personalInfo,
+    });
   } catch (error) {
     console.error('API 錯誤:', error);
     return NextResponse.json(

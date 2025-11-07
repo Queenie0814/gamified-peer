@@ -9,20 +9,23 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "add": "^2.0.6",
     "classnames": "^2.5.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.19",
     "next": "16.0.1",
+    "prisma": "^6.19.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^20",
+    "@types/node": "^24.10.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "sass": "^1.83.0",

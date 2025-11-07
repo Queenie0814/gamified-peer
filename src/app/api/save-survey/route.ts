@@ -1,42 +1,65 @@
 // src/app/api/save-survey/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-const APPS_SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbwM0DoC-IgFyejzPSgzpibBSXZQOcQfRw82HUV_ddr14UqM-NPll4yOK8UFog0uI0GP/exec';
+interface LegacySurveyData {
+  student_id: string;
+  student_name: string;
+  group: string;
+  completeness: number;
+  accuracy: number;
+  richness: number;
+  referability: number;
+  concept_map_total_score: number;
+  advantage: string;
+  suggest: string;
+  skill_reflection: string;
+  cognitive_reflection: string;
+  recommend: number;
+  personal_score: number;
+  submit_time: string;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { surveyData } = body;
+    const data = (await request.json()) as LegacySurveyData;
 
-    if (!surveyData) {
-      return NextResponse.json(
-        { success: false, error: '缺少問卷資料' },
-        { status: 400 }
-      );
-    }
-
-    // 轉發到 Google Apps Script
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await prisma.surveyResponse.create({
+      data: {
+        studentId: data.student_id,
+        studentName: data.student_name,
+        groupName: data.group,
+        completeness: data.completeness,
+        accuracy: data.accuracy,
+        richness: data.richness,
+        referability: data.referability,
+        conceptMapTotalScore: data.concept_map_total_score,
+        advantage: data.advantage,
+        suggest: data.suggest,
+        skillReflection: data.skill_reflection,
+        cognitiveReflection: data.cognitive_reflection,
+        recommend: data.recommend,
+        personalScore: data.personal_score,
+        submitTime: new Date(data.submit_time),
       },
-      body: JSON.stringify({
-        action: 'saveSurvey',
-        data: surveyData,
-      }),
     });
 
-    const result = await response.json();
-
-    return NextResponse.json(result);
+    return NextResponse.json({
+      success: true,
+      id: response.id,
+      studentId: data.student_id,
+      personalScore: data.personal_score,
+      totalScore: data.concept_map_total_score,
+      message: '資料已成功儲存',
+    });
   } catch (error) {
-    console.error('API 錯誤:', error);
+    console.error('Database error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+
     return NextResponse.json(
       {
         success: false,
-        error: '伺服器錯誤：' + (error as Error).message,
+        error: 'Apps Script 處理錯誤: ' + errorMessage,
       },
       { status: 500 }
     );
