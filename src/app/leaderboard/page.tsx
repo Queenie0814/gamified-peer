@@ -55,6 +55,7 @@ function LeaderboardContent() {
   const [students, setStudents] = useState<IPersonalList[]>([]);
   const [personalInfo, setPersonalInfo] = useState<Personal>({ student_name: '', student_id: '', records: [] });
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const searchParams = useSearchParams();
   const studentId = searchParams.get('student_id');
@@ -62,18 +63,14 @@ function LeaderboardContent() {
 
   useEffect(() => {
     fetchLeaderboard();
-
-    // 每 5 分鐘重新提取資料
-    const interval = setInterval(() => {
-      fetchLeaderboard();
-    }, 5 * 60 * 1000); // 5 分鐘 = 300000 毫秒
-
-    // 清除 interval，避免 memory leak
-    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = async (isManualRefresh = false) => {
+    if (isManualRefresh) {
+      setRefreshing(true);
+    }
+
     try {
       const response = await fetch(`/api/get-leaderboard?student_id=${studentId}&date=${currentDate}`);
       const data: LeaderboardData = await response.json();
@@ -96,7 +93,12 @@ function LeaderboardContent() {
       console.error('取得排行榜失敗:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    fetchLeaderboard(true);
   };
 
   return (
@@ -186,7 +188,14 @@ function LeaderboardContent() {
             )}
           </div>
         )}
-        {lastUpdate && <div className={styles.lastUpdate}>最後更新時間：{lastUpdate}</div>}
+        {lastUpdate && (
+          <div className={styles.lastUpdate}>
+            <span>最後更新時間：{lastUpdate}</span>
+            <button onClick={handleRefresh} disabled={refreshing} className={styles.refreshButton}>
+              {refreshing ? '更新中...' : '更新排行'}
+            </button>
+          </div>
+        )}
       </main>
 
       {isDialogOpen &&

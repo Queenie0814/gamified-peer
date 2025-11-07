@@ -248,11 +248,42 @@
 .lastUpdate {
   margin-top: 24px;
   padding: 12px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   color: var(--gray);
   font-size: 14px;
   font-weight: 500;
   opacity: 0.8;
+
+  .refreshButton {
+    padding: 8px 16px;
+    border: 2px solid #f2ad4e;
+    border-radius: 8px;
+    background-color: white;
+    color: #f2ad4e;
+    font-family: 'Noto Sans TC';
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f2ad4e;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 @keyframes float {
