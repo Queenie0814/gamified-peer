@@ -80,49 +80,45 @@ const HomeContent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, processed]);
 
-  // 積分計算函數
-  const calculatePersonalScore = (surveyData: SurveyData): number => {
-    let score = 10; // 基本分數：完成每組評分 +10分
+// 積分計算函數
+const calculatePersonalScore = (surveyData: SurveyData): number => {
+  let score = 10; // 基本分數：完成每組評分 +10分
 
-    // 從 result 陣列中找到對應的答案
-    const results = surveyData.result;
+  // 從 result 陣列中找到對應的答案
+  const results = surveyData.result;
 
-    // 尋找各個欄位的答案
-    const advantage = results.find((item) => item.alias === 'advantage')?.answer?.[0] || '';
-    const suggest = results.find((item) => item.alias === 'suggest')?.answer?.[0] || '';
-    const skillReflection = results.find((item) => item.alias === 'skill_reflection')?.answer?.[0] || '';
-    const cognitiveReflection = results.find((item) => item.alias === 'cognitive_reflection')?.answer?.[0] || '';
+  // 尋找各個欄位的答案
+  const advantage = results.find((item) => item.alias === 'advantage')?.answer?.[0] || '';
+  const suggest = results.find((item) => item.alias === 'suggest')?.answer?.[0] || '';
+  const skillReflection = results.find((item) => item.alias === 'skill_reflection')?.answer?.[0] || '';
+  const cognitiveReflection = results.find((item) => item.alias === 'cognitive_reflection')?.answer?.[0] || '';
 
-    // 優質回饋積分計算 (advantage, suggest)
-    const feedbackTexts = [advantage, suggest];
-    feedbackTexts.forEach((text) => {
-      const length = text.length;
+  // 優質回饋積分計算 (advantage, suggest) - 平均計算
+  const feedbackTexts = [advantage, suggest];
+  const averageFeedbackLength = feedbackTexts.reduce((sum, text) => sum + text.length, 0) / feedbackTexts.length;
 
-      if (length >= 40) {
-        score += 25;
-      } else if (length >= 30) {
-        score += 20;
-      } else if (length >= 20) {
-        score += 15;
-      }
-    });
+  if (averageFeedbackLength >= 40) {
+    score += 25;
+  } else if (averageFeedbackLength >= 30) {
+    score += 20;
+  } else if (averageFeedbackLength >= 20) {
+    score += 15;
+  }
 
-    // 深度反思積分計算 (skill_reflection, cognitive_reflection)
-    const reflectionTexts = [skillReflection, cognitiveReflection];
-    reflectionTexts.forEach((text) => {
-      const length = text.length;
+  // 深度反思積分計算 (skill_reflection, cognitive_reflection) - 平均計算
+  const reflectionTexts = [skillReflection, cognitiveReflection];
+  const averageReflectionLength = reflectionTexts.reduce((sum, text) => sum + text.length, 0) / reflectionTexts.length;
 
-      if (length >= 40) {
-        score += 25;
-      } else if (length >= 30) {
-        score += 20;
-      } else if (length >= 20) {
-        score += 15;
-      }
-    });
+  if (averageReflectionLength >= 40) {
+    score += 25;
+  } else if (averageReflectionLength >= 30) {
+    score += 20;
+  } else if (averageReflectionLength >= 20) {
+    score += 15;
+  }
 
-    return score;
-  };
+  return score;
+};
 
   // 概念圖總分計算函數
   const calculateTotalScore = (surveyData: SurveyData): number => {
