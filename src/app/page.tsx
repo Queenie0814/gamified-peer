@@ -187,6 +187,7 @@ const HomeContent = () => {
       const totalScore = calculateTotalScore(surveyData);
 
       // 4. 在 surveyData 中添加新欄位
+      // SurveyCake 給的是 UTC 時間，需要加 8 小時轉換為台灣時間
       const enhancedSurveyData = {
         ...surveyData,
         submit_time: dayjs(surveyData.submitTime).add(8, 'hour').format('YYYY-MM-DD HH:mm:ss'),
