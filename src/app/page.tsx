@@ -240,13 +240,8 @@ const HomeContent = () => {
 
       if (result.success) {
         setStatus(`✅ 資料儲存完成！個人積分: ${personalScore}分，概念圖總分: ${totalScore}分`);
-
-        setTimeout(() => {
-          setStatus('正在轉址到排行榜...');
-          router.push(
-            `/leaderboard?student_id=${surveyData.alias.student_id?.[0]}&date=${dayjs().format('YYYY-MM-DD')}`
-          );
-        }, 3000);
+        setStatus('正在轉址到排行榜...');
+        router.push(`/leaderboard?student_id=${surveyData.alias.student_id?.[0]}&date=${dayjs().format('YYYY-MM-DD')}`);
       } else {
         setStatus('❌ 儲存失敗：' + result.error);
       }
