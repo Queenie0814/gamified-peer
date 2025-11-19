@@ -4,6 +4,9 @@ import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 import PageLayout from '@/components/PageLayout';
 import RatingInput from '@/components/RatingInput';
@@ -245,7 +248,7 @@ function FormContent() {
         cognitive_reflection: rethinking,
         recommend: recommendation,
         personal_score: personalScore,
-        submit_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        submit_time: dayjs.utc().format('YYYY-MM-DD HH:mm:ss'),
       };
 
       console.log('提交資料：', submitData);

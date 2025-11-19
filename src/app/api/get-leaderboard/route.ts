@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,17 +11,19 @@ export async function GET(request: NextRequest) {
     const studentId = searchParams.get('student_id');
     const date = searchParams.get('date');
 
-    // 設定日期範圍
+    // 設定日期範圍 (以台灣時間 UTC+8 為準)
     let startDate: Date;
     let endDate: Date;
 
     if (date) {
-      startDate = dayjs(date).startOf('day').toDate();
-      endDate = dayjs(date).endOf('day').toDate();
+      // 將輸入的日期視為台灣時間，轉換為 UTC 時間查詢
+      // 例如：2024-01-15 台灣時間 00:00:00 = 2024-01-14 16:00:00 UTC
+      startDate = dayjs(date).utcOffset(8).startOf('day').utc().toDate();
+      endDate = dayjs(date).utcOffset(8).endOf('day').utc().toDate();
     } else {
-      // 沒有提供日期則使用今天
-      startDate = dayjs().startOf('day').toDate();
-      endDate = dayjs().endOf('day').toDate();
+      // 沒有提供日期則使用台灣今天
+      startDate = dayjs().utcOffset(8).startOf('day').utc().toDate();
+      endDate = dayjs().utcOffset(8).endOf('day').utc().toDate();
     }
 
     // 查詢當日的所有有效資料
