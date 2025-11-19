@@ -268,7 +268,7 @@ function FormContent() {
 
       if (result.success) {
         console.log(`✅ 資料儲存完成！個人積分: ${personalScore}分，概念圖總分: ${conceptMapTotalScore}分`);
-        setLoadingMessage(`✅ 資料儲存完成！個人積分: ${personalScore}分，概念圖總分: ${conceptMapTotalScore}分`);
+        setLoadingMessage(`✅ 資料儲存完成！`);
 
         // 延遲一下讓使用者看到成功訊息
         await new Promise((resolve) => setTimeout(resolve, 1000));
