@@ -1,300 +1,172 @@
-// src/app/page.tsx
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import CryptoJS from 'crypto-js';
-import dayjs from 'dayjs';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-import LoadingSpinner from '@/components/LoadingSpinner';
+import PageLayout from '@/components/PageLayout';
+import Input from '@/components/Input';
+import Select from '@/components/Select';
+import Button from '@/components/Button';
 
-// SurveyCake 資料型別定義
-interface SurveyResult {
-  subject: string;
-  type: string;
-  sn: number;
-  label: string;
-  alias: string;
-  answer: string[];
-  otherAnswer: string[];
-  answerLabel: string[];
-  answerAlias: string[];
-  extras?: Record<string, unknown> | null;
-}
+import styles from './page.module.scss';
 
-interface SurveyAlias {
-  student_id: string[];
-  student_name: string[];
-  group: string[];
-  score: string[];
-  advantage: string[];
-  suggest: string[];
-  skill_reflection: string[];
-  cognitive_reflection: string[];
-  recommend: number[];
-}
-
-interface SurveyData {
-  id: number;
-  svid: string;
-  title: string;
-  status: string;
-  submitTime: string;
-  mbunq: string | null;
-  serialNumber: string | null;
-  landingToken: string | null;
-  endStatus: string | null;
-  meta: {
-    isolated: {
-      status: boolean;
-      type: string | null;
-    };
-  };
-  mbrid: string | null;
-  alias: SurveyAlias;
-  result: SurveyResult[];
-  variables: unknown[];
-}
-
-const HomeContent = () => {
-  const searchParams = useSearchParams();
+export default function Home() {
   const router = useRouter();
-  const [status, setStatus] = useState('');
-  const [processed, setProcessed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 監聽 status 變化並輸出到 console
-  useEffect(() => {
-    if (status) {
-      console.log('狀態更新:', status);
-    }
-  }, [status]);
+  // 將所有表單欄位定義為 object array
+  const [formFields, setFormFields] = useState([
+    {
+      name: 'student_number',
+      label: '你的學號',
+      type: 'input' as const,
+      value: '',
+      error: '',
+      helperText: '',
+      fullWidth: true,
+      labelStyle: 'floating' as const,
+    },
+    {
+      name: 'name',
+      label: '你的姓名',
+      type: 'input' as const,
+      value: '',
+      error: '',
+      helperText: '',
+      fullWidth: true,
+      labelStyle: 'floating' as const,
+    },
+    {
+      name: 'group',
+      label: '挑選你的評分對象',
+      type: 'select' as const,
+      value: '',
+      error: '',
+      helperText: '',
+      fullWidth: true,
+      labelStyle: 'floating' as const,
+      options: [
+        { value: '1', label: '第一組' },
+        { value: '2', label: '第二組' },
+        { value: '3', label: '第三組' },
+        { value: '4', label: '第四組' },
+        { value: '5', label: '第五組' },
+        { value: '6', label: '第六組' },
+        { value: '7', label: '第七組' },
+      ],
+    },
+  ]);
 
-  useEffect(() => {
-    const svid = searchParams.get('svid');
-    const hash = searchParams.get('hash');
-
-    if (svid && hash && !processed) {
-      handleSurveySubmission(svid, hash);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, processed]);
-
-  // 輔助函數：從結果中取得分數
-  const getScoreFromResults = (results: SurveyResult[], keyword: string, alias?: string): number => {
-    if (alias) {
-      const item = results.find((item) => item.alias === alias);
-      return parseInt(item?.answer?.[0] || '0') || 0;
-    }
-
-    const item = results.find((item) => item.subject.includes(keyword) && item.type === 'NESTCHILD');
-    return parseInt(item?.answer?.[0] || '0') || 0;
+  // 更新特定欄位的值
+  const handleFieldChange = (name: string, value: string) => {
+    setFormFields((prev) =>
+      prev.map((field) =>
+        field.name === name
+          ? { ...field, value, error: '' } // 更新值並清除錯誤
+          : field
+      )
+    );
   };
 
-  // 輔助函數：從結果中取得文字答案
-  const getAnswerFromResults = (results: SurveyResult[], alias: string): string => {
-    const item = results.find((item) => item.alias === alias);
-    return item?.answer?.[0] || '';
+  // 更新特定欄位的錯誤訊息
+  const setFieldError = (name: string, error: string) => {
+    setFormFields((prev) => prev.map((field) => (field.name === name ? { ...field, error } : field)));
   };
 
-  // 積分計算函數
-  const calculatePersonalScore = (surveyData: SurveyData): number => {
-    let score = 10; // 基本分數：完成每組評分 +10分
+  // 驗證表單
+  const validateForm = () => {
+    let isValid = true;
 
-    // 從 result 陣列中找到對應的答案
-    const results = surveyData.result;
-
-    // 尋找各個欄位的答案
-    const advantage = results.find((item) => item.alias === 'advantage')?.answer?.[0] || '';
-    const suggest = results.find((item) => item.alias === 'suggest')?.answer?.[0] || '';
-    const skillReflection = results.find((item) => item.alias === 'skill_reflection')?.answer?.[0] || '';
-    const cognitiveReflection = results.find((item) => item.alias === 'cognitive_reflection')?.answer?.[0] || '';
-
-    // 優質回饋積分計算 (advantage, suggest) - 平均計算
-    const feedbackTexts = [advantage, suggest];
-    const averageFeedbackLength = feedbackTexts.reduce((sum, text) => sum + text.length, 0) / feedbackTexts.length;
-
-    if (averageFeedbackLength >= 40) {
-      score += 25;
-    } else if (averageFeedbackLength >= 30) {
-      score += 20;
-    } else if (averageFeedbackLength >= 20) {
-      score += 15;
-    }
-
-    // 深度反思積分計算 (skill_reflection, cognitive_reflection) - 平均計算
-    const reflectionTexts = [skillReflection, cognitiveReflection];
-    const averageReflectionLength =
-      reflectionTexts.reduce((sum, text) => sum + text.length, 0) / reflectionTexts.length;
-
-    if (averageReflectionLength >= 40) {
-      score += 25;
-    } else if (averageReflectionLength >= 30) {
-      score += 20;
-    } else if (averageReflectionLength >= 20) {
-      score += 15;
-    }
-
-    return score;
-  };
-
-  // 概念圖總分計算函數
-  const calculateTotalScore = (surveyData: SurveyData): number => {
-    const results = surveyData.result;
-
-    let completeness = 0;
-    let accuracy = 0;
-    let richness = 0;
-    let referability = 0;
-    let recommend = 0;
-
-    results.forEach((item) => {
-      if (item.type === 'NESTCHILD') {
-        const answer = parseInt(item.answer?.[0]) || 0;
-
-        // 根據 subject 內容判斷是哪個維度
-        if (item.subject.includes('完整性') || item.subject.includes('Completeness')) {
-          completeness = answer;
-        } else if (item.subject.includes('準確性') || item.subject.includes('Accuracy')) {
-          accuracy = answer;
-        } else if (item.subject.includes('豐富度') || item.subject.includes('Richness')) {
-          richness = answer;
-        } else if (item.subject.includes('參考價值') || item.subject.includes('Referability')) {
-          referability = answer;
+    formFields.forEach((field) => {
+      // 驗證必填欄位
+      if (!field.value.trim()) {
+        setFieldError(field.name, '此欄位為必填');
+        isValid = false;
+      }
+      // 驗證學號格式：8碼，由數字和大寫字母組成
+      else if (field.name === 'student_number' && field.value) {
+        if (!/^[A-Z0-9]{8}$/.test(field.value)) {
+          setFieldError(field.name, '格式有誤');
+          isValid = false;
         }
-      } else if (item.alias === 'recommend') {
-        recommend = parseInt(item.answer?.[0]) || 0;
       }
     });
 
-    const total = completeness + accuracy + richness + referability + recommend;
-
-    return total;
+    return isValid;
   };
 
-  const handleSurveySubmission = async (svid: string, hash: string) => {
-    if (processed) return;
+  // 提交表單
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    setProcessed(true);
+    if (validateForm()) {
+      setIsSubmitting(true);
 
-    try {
-      setStatus('正在取得問卷資料...');
+      // 將 formFields 轉換為簡單的 key-value object
+      const formData = formFields.reduce((acc, field) => {
+        acc[field.name] = field.value;
+        return acc;
+      }, {} as Record<string, string>);
 
-      // 1. 從 SurveyCake 取得加密資料
-      const webhookUrl = `https://www.surveycake.com/webhook/v0/${svid}/${hash}`;
-      const response = await fetch(webhookUrl);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const encryptedData = await response.text();
-      setStatus('正在解密資料...');
-
-      // 2. 在前端解密資料
-      const decryptedData = decryptSurveyData(encryptedData);
-      const surveyData = JSON.parse(decryptedData) as SurveyData;
-      setStatus('正在計算積分...');
-
-      // 3. 計算積分
-      const personalScore = calculatePersonalScore(surveyData);
-      const totalScore = calculateTotalScore(surveyData);
-
-      // 4. 在 surveyData 中添加新欄位
-      const enhancedSurveyData = {
-        ...surveyData,
-        submit_time: dayjs(surveyData.submitTime).format('YYYY-MM-DD HH:mm:ss'),
-        personalScore,
-        totalScore,
-      };
-
-      setStatus('正在儲存資料...');
-
-      // 5. 透過 API Route 儲存到資料庫
-      const saveResponse = await fetch('/api/survey', {
-        // 改為你的新 API
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          student_id: surveyData.alias.student_id?.[0] || '',
-          student_name: surveyData.alias.student_name?.[0] || '',
-          group: surveyData.alias.group?.[0] || '',
-          completeness: getScoreFromResults(surveyData.result, '完整性'),
-          accuracy: getScoreFromResults(surveyData.result, '準確性'),
-          richness: getScoreFromResults(surveyData.result, '豐富度'),
-          referability: getScoreFromResults(surveyData.result, '參考價值'),
-          concept_map_total_score: totalScore,
-          advantage: getAnswerFromResults(surveyData.result, 'advantage'),
-          suggest: getAnswerFromResults(surveyData.result, 'suggest'),
-          skill_reflection: getAnswerFromResults(surveyData.result, 'skill_reflection'),
-          cognitive_reflection: getAnswerFromResults(surveyData.result, 'cognitive_reflection'),
-          recommend: getScoreFromResults(surveyData.result, 'recommend', 'recommend'),
-          personal_score: personalScore,
-          submit_time: enhancedSurveyData.submit_time,
-        }),
+      // 建立查詢參數
+      const queryParams = new URLSearchParams({
+        group: formData.group,
+        name: formData.name,
+        student_id: formData.student_number,
       });
 
-      const result = await saveResponse.json();
-
-      if (result.success) {
-        setStatus(`✅ 資料儲存完成！個人積分: ${personalScore}分，概念圖總分: ${totalScore}分`);
-        setStatus('正在轉址到排行榜...');
-        router.push(`/leaderboard?student_id=${surveyData.alias.student_id?.[0]}&date=${dayjs().format('YYYY-MM-DD')}`);
-      } else {
-        setStatus('❌ 儲存失敗：' + result.error);
-      }
-    } catch (error) {
-      console.error('處理失敗:', error);
-      setStatus('❌ 發生錯誤：' + (error as Error).message);
-    }
-  };
-
-  // 解密函數
-  const decryptSurveyData = (encryptedData: string): string => {
-    const hashKey = '0a11beefaa02dac4';
-    const ivKey = 'e836c6f0b112b736';
-
-    try {
-      const key = CryptoJS.enc.Utf8.parse(hashKey);
-      const iv = CryptoJS.enc.Utf8.parse(ivKey);
-
-      const decrypted = CryptoJS.AES.decrypt(encryptedData, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      });
-
-      const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
-
-      if (!decryptedText) {
-        throw new Error('解密結果為空，請檢查金鑰是否正確');
-      }
-
-      return decryptedText;
-    } catch (error) {
-      console.error('解密失敗:', error);
-      throw new Error('解密失敗: ' + (error as Error).message);
+      // 跳轉到表單頁面
+      router.push(`/form?${queryParams.toString()}`);
     }
   };
 
   return (
-    <LoadingSpinner
-      message={
-        <>
-          正在處理資料，請耐心等候
-          <br />
-          請勿離開此頁面
-        </>
-      }
-    />
-  );
-};
+    <PageLayout className={styles.pageLayout} showPattern={false}>
+      <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        <Image src="/logo.png" className={styles.logo} alt="Logo" width={640} height={133} />
+        {formFields.map((field) => {
+          if (field.type === 'input') {
+            return (
+              <Input
+                key={field.name}
+                name={field.name}
+                label={field.label}
+                value={field.value}
+                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                error={field.error}
+                helperText={!field.error ? field.helperText : undefined}
+                fullWidth={field.fullWidth}
+                labelStyle={field.labelStyle}
+                maxLength={8}
+              />
+            );
+          }
 
-export default function Home() {
-  return (
-    <Suspense fallback={<LoadingSpinner message="Loading..." />}>
-      <HomeContent />
-    </Suspense>
+          if (field.type === 'select') {
+            return (
+              <Select
+                key={field.name}
+                name={field.name}
+                label={field.label}
+                value={field.value}
+                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                options={field.options || []}
+                error={field.error}
+                helperText={!field.error ? field.helperText : undefined}
+                fullWidth={field.fullWidth}
+                labelStyle={field.labelStyle}
+              />
+            );
+          }
+
+          return null;
+        })}
+
+        <Button type="submit" className={styles.submitButton} loading={isSubmitting} fullWidth>
+          ENTER
+        </Button>
+      </form>
+    </PageLayout>
   );
 }

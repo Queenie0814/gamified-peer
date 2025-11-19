@@ -1,0 +1,139 @@
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap';
+
+.page {
+  --background: #fafafa;
+  --foreground: #fcf2c3;
+  --gray: #999999;
+
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geist-sans);
+  background-color: var(--background);
+
+  > * {
+    font-family: 'Noto Sans TC', var(--font-geist-sans), sans-serif;
+  }
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background-color: #fef3e2;
+
+  @media screen and (max-width: 1200px) {
+    max-width: 800px;
+  }
+
+  // Blob 形狀容器
+  .blobContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+  }
+
+  // Blob 形狀 1 - 金黃色
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4rem;
+    width: 18rem;
+    height: 18rem;
+    background-color: #f2ad4e;
+    border-radius: 50%;
+    filter: blur(64px);
+    opacity: 0.7;
+    mix-blend-mode: multiply;
+    animation: blob 5s infinite;
+    z-index: 0;
+  }
+
+  // Blob 形狀 2 - 橙色
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -4rem;
+    width: 18rem;
+    height: 18rem;
+    background-color: #ff9500;
+    border-radius: 50%;
+    filter: blur(64px);
+    opacity: 0.7;
+    mix-blend-mode: multiply;
+    animation: blob 5s infinite;
+    animation-delay: 1s;
+    z-index: 0;
+  }
+
+  // 背景圖案層
+  .patternOverlay {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/pattern.png');
+    background-position: right top;
+    background-repeat: no-repeat;
+    z-index: 1;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  // 確保內容在最上層
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &.noPattern {
+    .patternOverlay {
+      display: none;
+    }
+  }
+}
+
+// Blob 形狀 3 需要額外元素，我們用 JavaScript 添加
+.blob3 {
+  position: absolute;
+  bottom: -2rem;
+  left: 5rem;
+  width: 18rem;
+  height: 18rem;
+  background-color: #fcf2c3;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: 0.7;
+  mix-blend-mode: multiply;
+  animation: blob 5s infinite;
+  animation-delay: 3s;
+  z-index: 0;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}

@@ -1,0 +1,122 @@
+@import 'https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap';
+
+.creepyBtn {
+  background-color: #000;
+  border-radius: 1.25em;
+  color: #f5f5f5;
+  cursor: pointer;
+  letter-spacing: 1px;
+  min-width: 9em;
+  outline: 0.1875em solid transparent;
+  transition: outline 0.1s linear;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  font-family: 'Luckiest Guy', 'Noto Sans TC', sans-serif;
+  font-size: 16px;
+  position: relative;
+
+  &__cover,
+  &__eye {
+    position: relative;
+  }
+
+  &__pupil {
+    background-color: #000;
+  }
+
+  &__cover,
+  &__pupil {
+    border-radius: inherit;
+    display: block;
+  }
+
+  &__cover {
+    box-shadow: 0 0 0 0.125em #000 inset;
+    padding: 0.5em 1em;
+    inset: 0;
+    transform-origin: 1.25em 50%;
+    transition:
+      background-color 0.3s,
+      transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  &__eye {
+    animation: eyeBlink 3s infinite;
+    background-color: #f5f5f5;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 0.75em;
+    height: 0.75em;
+  }
+
+  &__eyes,
+  &__pupil {
+    position: absolute;
+  }
+
+  &__eyes {
+    display: flex;
+    align-items: center;
+    gap: 0.375em;
+    right: 1em;
+    bottom: 0.5em;
+    height: 0.75em;
+  }
+
+  &__pupil {
+    aspect-ratio: 1;
+    top: 50%;
+    left: 50%;
+    width: 0.375em;
+    transform: translate(-50%, -50%);
+  }
+
+  &:focus-visible {
+    outline: 0.1875em solid #f2ad4e;
+  }
+
+  &:focus-visible &__cover,
+  &:hover &__cover {
+    transform: rotate(-12deg);
+    transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1.65);
+  }
+
+  &:active &__cover {
+    transform: rotate(0);
+    transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  // Primary 變體（金黃色）
+  &.primary &__cover {
+    background-color: #f2ad4e;
+  }
+
+  &.primary:hover &__cover {
+    background-color: #ff9500;
+  }
+
+  // Secondary 變體（淺黃色）
+  &.secondary &__cover {
+    background-color: #fcf2c3;
+    color: #8b4513;
+  }
+
+  &.secondary:hover &__cover {
+    background-color: #fff9e6;
+  }
+}
+
+@keyframes eyeBlink {
+  0%,
+  92%,
+  100% {
+    animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0);
+    height: 0.75em;
+  }
+
+  96% {
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    height: 0;
+  }
+}

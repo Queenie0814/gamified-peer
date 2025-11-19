@@ -1,0 +1,115 @@
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap';
+
+.ratingContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8b4513;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.description {
+  font-size: 14px;
+  color: #999999;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.ratingButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ratingButton {
+  flex: 1;
+  min-width: 60px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background-color: white;
+  border: 2px solid #f2ad4e;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Noto Sans TC', sans-serif;
+
+  &:hover {
+    background-color: #fcf2c3;
+    border-color: #ff9500;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(242, 173, 78, 0.3);
+  }
+
+  &.active {
+    background-color: #f2ad4e;
+    border-color: #ff9500;
+    color: white;
+
+    .ratingValue,
+    .ratingLabel {
+      color: white;
+    }
+  }
+
+  &.hovered:not(.active) {
+    background-color: #fff9e6;
+    border-color: #ff9500;
+  }
+}
+
+.ratingValue {
+  font-size: 24px;
+  font-weight: 400;
+  color: #f2ad4e;
+  transition: color 0.2s ease;
+  font-family: 'Luckiest Guy';
+  margin-bottom: -0.5rem;
+  letter-spacing: 0.1rem;
+}
+
+.ratingLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #999999;
+  transition: color 0.2s ease;
+}
+
+.errorText {
+  font-size: 14px;
+  color: #ef4444;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+// 響應式設計
+@media (max-width: 640px) {
+  .ratingButtons {
+    gap: 6px;
+  }
+
+  .ratingButton {
+    min-width: 50px;
+    padding: 10px 6px;
+  }
+
+  .ratingValue {
+    font-size: 20px;
+  }
+
+  .ratingLabel {
+    font-size: 11px;
+  }
+}

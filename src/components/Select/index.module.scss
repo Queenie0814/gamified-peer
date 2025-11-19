@@ -1,0 +1,332 @@
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap';
+
+.selectContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: fit-content;
+
+  &.fullWidth {
+    width: 100%;
+  }
+}
+
+.selectWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+// ========== 傳統上方標籤樣式（labelStyle="top"） ==========
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b4513;
+  margin-bottom: 0.5rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: all 0.2s ease-in-out;
+
+  .required {
+    color: #ff9500;
+    margin-left: 0.25rem;
+  }
+}
+
+// ========== 浮動標籤樣式（labelStyle="floating"） ==========
+.floatingLabel {
+  .label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    padding: 0 0.25rem;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 16px;
+    font-weight: 500;
+    color: #999999;
+    margin-bottom: 0;
+    z-index: 1;
+    border-radius: 8px;
+  }
+
+  // 當標籤浮動時的樣式（聚焦或有值）
+  &.labelActive .label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: #f2ad4e;
+    background-color: #ffffff;
+    padding: 0 0.5rem;
+  }
+
+  // Filled variant 的浮動標籤背景
+  .select.filled ~ .label,
+  &.labelActive .select.filled ~ .label {
+    background-color: transparent;
+  }
+
+  &.labelActive .select.filled ~ .label {
+    background-color: #ffffff;
+  }
+}
+
+// 下拉選單基本樣式
+.select {
+  padding: 8px 12px;
+  padding-right: 2.5rem; // 為箭頭留空間
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  font-family: 'Noto Sans TC', sans-serif;
+  position: relative;
+  z-index: 0;
+  cursor: pointer;
+  appearance: none; // 移除預設樣式
+  background-color: #ffffff;
+
+  &:focus {
+    outline: none;
+  }
+
+  // 隱藏預設的下拉箭頭（某些瀏覽器）
+  &::-ms-expand {
+    display: none;
+  }
+
+  // Placeholder 樣式（第一個 disabled option）
+  option[value=''] {
+    color: #999999;
+  }
+
+  // 當使用浮動標籤且未選擇時，文字透明以避免與 label 重疊
+  &.withFloatingLabel {
+    &:invalid,
+    &[value=''] {
+      color: transparent;
+    }
+
+    // 選擇後顯示文字
+    &:not(:invalid):not([value='']),
+    &:focus {
+      color: inherit;
+    }
+
+    // 但 option 永遠保持可見
+    option {
+      color: #000000;
+    }
+  }
+
+  // ========== Outlined 樣式 ==========
+  &.outlined {
+    border: 2px solid #f2ad4e;
+    background-color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: #ff9500;
+      box-shadow: 0 0 0 2px rgba(242, 173, 78, 0.1);
+    }
+
+    &:focus {
+      border-color: #ff9500;
+      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.2);
+    }
+  }
+
+  // ========== Filled 樣式 ==========
+  &.filled {
+    border: none;
+    border-bottom: 2px solid #f2ad4e;
+    background-color: #fcf2c3;
+    border-radius: 0.5rem 0.5rem 0 0;
+
+    &:hover:not(:disabled) {
+      background-color: #fff9e6;
+      border-bottom-color: #ff9500;
+    }
+
+    &:focus {
+      background-color: #ffffff;
+      border-bottom-color: #ff9500;
+      box-shadow: 0 2px 0 0 rgba(255, 149, 0, 0.3);
+    }
+  }
+
+  // ========== Error 狀態 ==========
+  &.error {
+    &.outlined {
+      border-color: #ef4444;
+
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+      }
+    }
+
+    &.filled {
+      border-bottom-color: #ef4444;
+
+      &:focus {
+        border-bottom-color: #ef4444;
+        box-shadow: 0 2px 0 0 rgba(239, 68, 68, 0.3);
+      }
+    }
+  }
+
+  // ========== Disabled 狀態 ==========
+  &.disabled,
+  &:disabled {
+    background-color: #f9fafb;
+    color: #999999;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+
+    &:hover {
+      border-color: #e5e7eb;
+      box-shadow: none;
+    }
+  }
+}
+
+// 自定義下拉箭頭
+.arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #f2ad4e;
+  font-size: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
+}
+
+// 當 select 聚焦時，箭頭旋轉
+.selectWrapper:has(.select:focus) .arrow {
+  transform: translateY(-50%);
+  color: #ff9500;
+}
+
+// Disabled 時的箭頭顏色
+.selectWrapper:has(.select:disabled) .arrow {
+  color: #e5e7eb;
+}
+
+// Error 狀態下的 label 顏色
+.floatingLabel.labelActive .select.error ~ .label {
+  color: #ef4444;
+}
+
+// 錯誤訊息
+.errorText {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 0.25rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &::before {
+    content: '⚠';
+    font-size: 12px;
+  }
+}
+
+// 輔助文字
+.helperText {
+  font-size: 14px;
+  color: #8b4513;
+  margin-top: 0.25rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  opacity: 0.8;
+}
+
+// ========== Dark Mode（可選） ==========
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: #ffed6d;
+  }
+
+  .floatingLabel {
+    .label {
+      color: #999999;
+    }
+
+    &.labelActive .label {
+      color: #ffed6d;
+      background-color: #1f2937;
+    }
+  }
+
+  .select {
+    &.outlined {
+      background-color: #1f2937;
+      border-color: #f2ad4e;
+      color: #ffffff;
+
+      &:hover:not(:disabled) {
+        border-color: #ffed6d;
+      }
+
+      &:focus {
+        border-color: #ffed6d;
+        box-shadow: 0 0 0 4px rgba(255, 237, 109, 0.2);
+      }
+    }
+
+    &.filled {
+      background-color: #374151;
+      border-bottom-color: #f2ad4e;
+      color: #ffffff;
+
+      &:hover:not(:disabled) {
+        background-color: #4b5563;
+        border-bottom-color: #ffed6d;
+      }
+
+      &:focus {
+        background-color: #1f2937;
+        border-bottom-color: #ffed6d;
+      }
+    }
+
+    &.disabled,
+    &:disabled {
+      background-color: #111827;
+      color: #6b7280;
+    }
+
+    option {
+      background-color: #1f2937;
+      color: #ffffff;
+    }
+
+    // Dark mode 下浮動標籤的 option 顏色
+    &.withFloatingLabel option {
+      color: #ffffff;
+    }
+  }
+
+  .floatingLabel.labelActive .select.outlined ~ .label,
+  .floatingLabel.labelActive .select.filled ~ .label {
+    background-color: #1f2937;
+  }
+
+  .arrow {
+    color: #f2ad4e;
+  }
+
+  .selectWrapper:has(.select:focus) .arrow {
+    color: #ffed6d;
+  }
+
+  .helperText {
+    color: #f2ad4e;
+  }
+}

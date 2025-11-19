@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
 
+import PageLayout from '@/components/PageLayout';
 import BarLoader from '@/components/BarLoader';
 
 import styles from './page.module.scss';
@@ -61,6 +62,19 @@ function LeaderboardContent() {
   const studentId = searchParams.get('student_id');
   const currentDate = searchParams.get('date');
 
+  const getGroupDisplayName = (groupNumber: string) => {
+    const numberMap: { [key: string]: string } = {
+      '1': '第一組',
+      '2': '第二組',
+      '3': '第三組',
+      '4': '第四組',
+      '5': '第五組',
+      '6': '第六組',
+      '7': '第七組',
+    };
+    return numberMap[groupNumber] || `第${groupNumber}組`;
+  };
+
   useEffect(() => {
     fetchLeaderboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,8 +116,8 @@ function LeaderboardContent() {
   };
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <PageLayout showPattern={false}>
+      <div className={styles.main}>
         <h1 className={styles.title}>Group Ranking</h1>
         {loading ? (
           <div className={styles.group}>
@@ -112,22 +126,26 @@ function LeaderboardContent() {
         ) : (
           <div className={styles.group}>
             {groups.slice(0, 3).map((group, index) => {
-              // 排序：第二名在左、第一名在中、第三名在右
-              const displayOrder = [1, 0, 2];
+              const displayOrder = [1, 0, 2]; // 2nd left, 1st center, 3rd right
               const displayIndex = displayOrder.indexOf(index);
 
               return (
                 <div
                   key={group.group}
-                  className={classNames(styles.item, {
+                  className={classNames(styles.podiumItem, {
                     [styles.first]: index === 0,
+                    [styles.second]: index === 1,
+                    [styles.third]: index === 2,
                   })}
                   style={{ order: displayIndex }}
                 >
-                  <div className={styles.avatar}>
-                    <div>{index + 1}</div>
+                  <div className={styles.bar}>
+                    <div className={styles.score}>{group.total_score}</div>
                   </div>
-                  <span>{group.group}</span>
+                  <div className={styles.rank}>
+                    <span>{index + 1}</span>
+                  </div>
+                  <div className={styles.name}>{getGroupDisplayName(group.group)}</div>
                 </div>
               );
             })}
@@ -163,7 +181,9 @@ function LeaderboardContent() {
                     })}
                   >
                     <div className={styles.info}>
-                      <div className={styles.rank}>{index + 1}</div>
+                      <div className={styles.rank}>
+                        <span>{index + 1}</span>
+                      </div>
                       <div className={styles.name}>{person.student_name}</div>
                     </div>
                     <div className={styles.score}>{person.score}</div>
@@ -196,7 +216,7 @@ function LeaderboardContent() {
             </button>
           </div>
         )}
-      </main>
+      </div>
 
       {isDialogOpen &&
         (() => {
@@ -241,7 +261,7 @@ function LeaderboardContent() {
                   )}
                   {feedbackAvgLength > 40 && (
                     <div>
-                      <Image src="/acg_3.png" alt="回饋大師" width={64} height={64} />
+                      <Image src="/ach_3.png" alt="回饋大師" width={64} height={64} />
                       <p>回饋大師</p>
                       <span>回饋平均字數 40 字</span>
                     </div>
@@ -268,12 +288,14 @@ function LeaderboardContent() {
                     </div>
                   )}
                 </div>
-                <button onClick={() => setIsDialogOpen(false)}>確認</button>
+                <button onClick={() => setIsDialogOpen(false)}>
+                  <span>OK</span>
+                </button>
               </div>
             </div>
           );
         })()}
-    </div>
+    </PageLayout>
   );
 }
 
@@ -281,11 +303,11 @@ export default function Leaderboard() {
   return (
     <Suspense
       fallback={
-        <div className={styles.page}>
-          <main className={styles.main}>
+        <PageLayout showPattern={false}>
+          <div className={styles.main}>
             <BarLoader />
-          </main>
-        </div>
+          </div>
+        </PageLayout>
       }
     >
       <LeaderboardContent />
