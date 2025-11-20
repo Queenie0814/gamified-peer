@@ -118,39 +118,41 @@ function LeaderboardContent() {
   return (
     <PageLayout showPattern={false}>
       <div className={styles.main}>
-        <h1 className={styles.title}>Group Ranking</h1>
-        {loading ? (
-          <div className={styles.group}>
-            <BarLoader />
-          </div>
-        ) : (
-          <div className={styles.group}>
-            {groups.slice(0, 3).map((group, index) => {
-              const displayOrder = [1, 0, 2]; // 2nd left, 1st center, 3rd right
-              const displayIndex = displayOrder.indexOf(index);
+        <div>
+          <h1 className={styles.title}>Group Ranking</h1>
+          {loading ? (
+            <div className={styles.group}>
+              <BarLoader />
+            </div>
+          ) : (
+            <div className={styles.group}>
+              {groups.slice(0, 3).map((group, index) => {
+                const displayOrder = [1, 0, 2]; // 2nd left, 1st center, 3rd right
+                const displayIndex = displayOrder.indexOf(index);
 
-              return (
-                <div
-                  key={group.group}
-                  className={classNames(styles.podiumItem, {
-                    [styles.first]: index === 0,
-                    [styles.second]: index === 1,
-                    [styles.third]: index === 2,
-                  })}
-                  style={{ order: displayIndex }}
-                >
-                  <div className={styles.bar}>
-                    <div className={styles.score}>{group.total_score}</div>
+                return (
+                  <div
+                    key={group.group}
+                    className={classNames(styles.podiumItem, {
+                      [styles.first]: index === 0,
+                      [styles.second]: index === 1,
+                      [styles.third]: index === 2,
+                    })}
+                    style={{ order: displayIndex }}
+                  >
+                    <div className={styles.bar}>
+                      <div className={styles.score}>{group.total_score}</div>
+                    </div>
+                    <div className={styles.rank}>
+                      <span>{index + 1}</span>
+                    </div>
+                    <div className={styles.name}>{getGroupDisplayName(group.group)}</div>
                   </div>
-                  <div className={styles.rank}>
-                    <span>{index + 1}</span>
-                  </div>
-                  <div className={styles.name}>{getGroupDisplayName(group.group)}</div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
         <div className={styles.box}>
           <div>
             <Image
@@ -163,51 +165,53 @@ function LeaderboardContent() {
             />
           </div>
         </div>
-        <h1 className={styles.title}>Individual Ranking</h1>
-        {loading ? (
-          <div className={styles.personal}>
-            <BarLoader />
-          </div>
-        ) : (
-          <div className={styles.personal}>
-            {students.length > 0 ? (
-              <>
-                {students.map((person, index) => (
-                  <div
-                    key={`${person.student_name}-${index}`}
-                    className={classNames(styles.item, {
-                      [styles.first]: index === 0,
-                      [styles.highlight]: person.student_id === studentId,
-                    })}
-                  >
-                    <div className={styles.info}>
-                      <div className={styles.rank}>
-                        <span>{index + 1}</span>
+        <div>
+          <h1 className={styles.title}>Individual Ranking</h1>
+          {loading ? (
+            <div className={styles.personal}>
+              <BarLoader />
+            </div>
+          ) : (
+            <div className={styles.personal}>
+              {students.length > 0 ? (
+                <>
+                  {students.map((person, index) => (
+                    <div
+                      key={`${person.student_name}-${index}`}
+                      className={classNames(styles.item, {
+                        [styles.first]: index === 0,
+                        [styles.highlight]: person.student_id === studentId,
+                      })}
+                    >
+                      <div className={styles.info}>
+                        <div className={styles.rank}>
+                          <span>{index + 1}</span>
+                        </div>
+                        <div className={styles.name}>{person.student_name}</div>
                       </div>
-                      <div className={styles.name}>{person.student_name}</div>
+                      <div className={styles.score}>{person.score}</div>
                     </div>
-                    <div className={styles.score}>{person.score}</div>
-                  </div>
-                ))}
-                {/* 如果前五名沒有當前學生，額外顯示該學生資訊 */}
-                {personalInfo && studentId && !students.some((s) => s.student_id === studentId) && (
-                  <div className={classNames(styles.item, styles.highlight)}>
-                    <div className={styles.info}>
-                      <div className={styles.rank}>-</div>
-                      <div className={styles.name}>{personalInfo.student_name}</div>
+                  ))}
+                  {/* 如果前五名沒有當前學生，額外顯示該學生資訊 */}
+                  {personalInfo && studentId && !students.some((s) => s.student_id === studentId) && (
+                    <div className={classNames(styles.item, styles.highlight)}>
+                      <div className={styles.info}>
+                        <div className={styles.rank}>-</div>
+                        <div className={styles.name}>{personalInfo.student_name}</div>
+                      </div>
+                      <div className={styles.score}>
+                        {personalInfo.records.reduce((sum, record) => sum + record.personal_score, 0) +
+                          (personalInfo.records.length >= 6 ? 30 : 0)}
+                      </div>
                     </div>
-                    <div className={styles.score}>
-                      {personalInfo.records.reduce((sum, record) => sum + record.personal_score, 0) +
-                        (personalInfo.records.length >= 6 ? 30 : 0)}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div>暫無資料</div>
-            )}
-          </div>
-        )}
+                  )}
+                </>
+              ) : (
+                <div>暫無資料</div>
+              )}
+            </div>
+          )}
+        </div>
         {lastUpdate && (
           <div className={styles.lastUpdate}>
             <span>最後更新時間：{lastUpdate}</span>
