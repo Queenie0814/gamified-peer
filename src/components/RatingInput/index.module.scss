@@ -14,15 +14,15 @@
 }
 
 .label {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  color: #8b4513;
+  color: #6a1b9a;
   font-family: 'Noto Sans TC', sans-serif;
 }
 
 .description {
-  font-size: 14px;
-  color: #999999;
+  font-size: 16px;
+  color: #333;
   font-family: 'Noto Sans TC', sans-serif;
 }
 
@@ -41,22 +41,22 @@
   align-items: center;
   gap: 4px;
   background-color: white;
-  border: 2px solid #f2ad4e;
+  border: 2px solid #9e2ae7;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'Noto Sans TC', sans-serif;
 
   &:hover {
-    background-color: #fcf2c3;
-    border-color: #ff9500;
+    background-color: rgba(206, 72, 255, 0.2);
+    border-color: #6a1b9a;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(242, 173, 78, 0.3);
+    box-shadow: 0 4px 12px rgba(206, 72, 255, 0.3);
   }
 
   &.active {
-    background-color: #f2ad4e;
-    border-color: #ff9500;
+    background-color: #6a1b9a;
+    border-color: #6a1b9a;
     color: white;
 
     .ratingValue,
@@ -66,15 +66,16 @@
   }
 
   &.hovered:not(.active) {
-    background-color: #fff9e6;
-    border-color: #ff9500;
+    background-color: rgba(206, 72, 255, 0.1);
+    border-color: #6a1b9a;
+    box-shadow: 0;
   }
 }
 
 .ratingValue {
   font-size: 24px;
   font-weight: 400;
-  color: #f2ad4e;
+  color: #9e2ae7;
   transition: color 0.2s ease;
   font-family: 'Luckiest Guy';
   margin-bottom: -0.5rem;

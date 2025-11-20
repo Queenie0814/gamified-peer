@@ -1,7 +1,8 @@
 .pageLayout {
   .logo {
-    width: 300px;
+    width: 400px;
     height: auto;
+    max-width: 100%;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
   }
 
@@ -23,7 +24,7 @@
     span {
       font-family: 'Luckiest Guy' !important;
       margin-bottom: -0.5rem;
-      font-size: 24px;
+      font-size: 32px;
       letter-spacing: 0.1rem;
     }
   }

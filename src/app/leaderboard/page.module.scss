@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  background: linear-gradient(180deg, #faf5ff 0%, #fafafa 50%, #fff8f0 100%);
 
   > * {
     font-family: 'Noto Sans TC';
@@ -32,15 +32,18 @@
 }
 
 .title {
-  color: #ffed6d;
+  color: #9e2ae7;
   font-family: 'Luckiest Guy';
-  letter-spacing: 0.1rem;
-  font-size: 32px;
+  letter-spacing: 0.2rem;
+  font-size: 48px;
   font-style: normal;
   font-weight: 900;
   line-height: normal;
-  text-shadow: 0 0 10px #f2ad4e, 0 0 20px #f2ad4e, 0 0 30px #f2ad4e, 0 0 40px #ff9500, 0 0 70px #ff9500,
-    0 0 80px #ff9500, 0 0 100px #ff9500;
+  text-shadow: 0 0 40px rgba(206, 72, 255, 0.8);
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
 }
 
 .group {
@@ -65,22 +68,26 @@
     > .bar {
       width: 100%;
       min-height: 80px;
-      background: linear-gradient(135deg, #fda940 0%, #ff9500 100%);
+      background: linear-gradient(135deg, #ce48ff 0%, #f2ad4e 100%);
       border-radius: 12px 12px 0 0;
       display: flex;
       align-items: flex-start;
       justify-content: center;
       padding-top: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(158, 42, 231, 0.3);
       overflow: hidden;
       will-change: height;
 
       > .score {
         font-family: 'Luckiest Guy';
-        font-size: 28px;
+        font-size: 42px;
         font-weight: 400;
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+        @media (max-width: 768px) {
+          font-size: 28px;
+        }
       }
     }
 
@@ -90,25 +97,32 @@
       justify-content: center;
       width: 48px;
       height: 48px;
-      background-color: #8b4513;
+      background: #ce48ff;
       border-radius: 50%;
       color: white;
       position: relative;
 
       > span {
         font-family: 'Luckiest Guy';
-        font-size: 24px;
+        font-size: 36px;
         font-weight: 400;
         margin-bottom: -0.5rem;
+
+        @media (max-width: 768px) {
+          font-size: 24px;
+        }
       }
     }
 
     > .name {
-      font-size: 18px;
+      font-size: 28px;
       font-weight: 700;
-      color: #8b4513;
+      color: #9e2ae7;
       text-align: center;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
     }
 
     &.first {
@@ -120,7 +134,6 @@
       }
 
       > .rank {
-        background-color: #ffd700;
         position: relative;
 
         &::before {
@@ -142,24 +155,18 @@
     &.second {
       > .bar {
         height: 150px;
-        background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 50%, #a8a8a8 100%);
+        background: linear-gradient(135deg, #9e2ae7 0%, #ce48ff 50%, #b565ff 100%);
         animation: growToSecond 0.9s ease-out forwards;
-      }
-
-      > .rank {
-        background-color: #c0c0c0;
+        box-shadow: 0 4px 12px rgba(158, 42, 231, 0.4);
       }
     }
 
     &.third {
       > .bar {
         height: 120px;
-        background: linear-gradient(135deg, #cd7f32 0%, #e6a873 50%, #b5651d 100%);
+        background: linear-gradient(135deg, #b565ff 0%, #f2ad4e 50%, #fda940 100%);
         animation: growToThird 0.8s ease-out forwards;
-      }
-
-      > .rank {
-        background-color: #cd7f32;
+        box-shadow: 0 4px 12px rgba(206, 72, 255, 0.3);
       }
     }
   }
@@ -253,15 +260,20 @@
   justify-content: center;
   row-gap: 12px;
   border-radius: 24px;
-  background-color: #f2ad4e;
+  background-color: #9e2ae7;
 
   > .separator {
     padding: 12px 0;
     text-align: center;
-    color: rgba($color: #8b4513, $alpha: 0.6);
-    font-size: 24px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 36px;
     font-weight: 700;
     letter-spacing: 8px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
   }
 
   > .item {
@@ -273,8 +285,8 @@
     transition: all 0.3s ease;
 
     &.highlight {
-      background-color: #ffed6d;
-      box-shadow: 0 0 20px rgba(255, 237, 109, 0.6);
+      background: #ffd700;
+      box-shadow: 0 0 20px rgba(206, 72, 255, 0.6);
       transform: scale(1.02);
     }
 
@@ -310,30 +322,42 @@
         justify-content: center;
         width: 40px;
         height: 40px;
-        background-color: #fda940;
+        background: #ce48ff;
         border-radius: 50%;
         color: white;
 
         > span {
           font-family: 'Luckiest Guy';
-          font-size: 24px;
+          font-size: 36px;
           font-weight: 400;
           margin-bottom: -0.5rem;
+
+          @media (max-width: 768px) {
+            font-size: 24px;
+          }
         }
       }
 
       > .name {
-        font-size: 20px;
+        font-size: 30px;
         font-weight: 700;
+
+        @media (max-width: 768px) {
+          font-size: 20px;
+        }
       }
     }
 
     > .score {
       font-family: 'Luckiest Guy';
       color: var(--gray);
-      font-size: 24px;
+      font-size: 36px;
       font-weight: 400;
       margin-bottom: -0.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 24px;
+      }
     }
   }
 }
@@ -346,24 +370,32 @@
   align-items: center;
   gap: 12px;
   color: var(--gray);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 500;
   opacity: 0.8;
 
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
   .refreshButton {
     padding: 8px 16px;
-    border: 2px solid #f2ad4e;
+    border: 2px solid transparent;
     border-radius: 8px;
-    background-color: white;
-    color: #f2ad4e;
+    background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #9e2ae7 0%, #f2ad4e 100%) border-box;
+    color: #9e2ae7;
     font-family: 'Noto Sans TC';
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
 
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+
     &:hover:not(:disabled) {
-      background-color: #f2ad4e;
+      background: linear-gradient(135deg, #9e2ae7 0%, #f2ad4e 100%);
       color: white;
       transform: scale(1.05);
     }
@@ -415,19 +447,26 @@
   .dialog {
     border-radius: 24px;
     background: #fff;
-    padding: 32px;
+    padding: 16px;
     max-width: 400px;
     width: 90%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.3s ease;
 
     h2 {
-      color: #f2ad4e;
+      background: linear-gradient(135deg, #9e2ae7 0%, #f2ad4e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       font-family: 'Luckiest Guy';
       letter-spacing: 0.1rem;
-      font-size: 28px;
+      font-size: 36px;
       font-weight: 900;
       text-align: center;
+
+      @media (max-width: 768px) {
+        font-size: 28px;
+      }
     }
 
     .achievementContent {
@@ -446,14 +485,22 @@
 
         > p {
           margin-top: 8px;
-          font-size: 16px;
+          font-size: 20px;
           font-weight: 500;
+
+          @media (max-width: 768px) {
+            font-size: 16px;
+          }
         }
 
         > span {
           color: var(--gray);
-          font-size: 14px;
+          font-size: 18px;
           font-weight: 700;
+
+          @media (max-width: 768px) {
+            font-size: 14px;
+          }
         }
       }
     }
@@ -463,21 +510,28 @@
       padding: 12px 24px;
       border: none;
       border-radius: 12px;
-      background-color: #f2ad4e;
+      background: linear-gradient(135deg, #9e2ae7 0%, #ce48ff 50%, #f2ad4e 100%);
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
 
       span {
         color: white;
         font-family: 'Luckiest Guy';
         letter-spacing: 0.1rem;
         margin-bottom: -2rem;
-        font-size: 24px;
+        font-size: 30px;
         font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+        @media (max-width: 768px) {
+          font-size: 24px;
+        }
       }
 
       &:hover {
-        background-color: #ff9500;
+        background: linear-gradient(135deg, #8a24d1 0%, #b83cef 50%, #ff9500 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(158, 42, 231, 0.4);
       }
 
       &:active {

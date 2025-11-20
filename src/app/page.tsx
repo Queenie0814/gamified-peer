@@ -124,7 +124,7 @@ export default function Home() {
   return (
     <PageLayout className={styles.pageLayout} showPattern={false}>
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
-        <Image src="/logo.png" className={styles.logo} alt="Logo" width={640} height={133} />
+        <Image src="/logov2.png" className={styles.logo} alt="Logo" width={640} height={133} />
         {formFields.map((field) => {
           if (field.type === 'input') {
             return (

@@ -55,11 +55,15 @@
   &.labelActive .label {
     top: 0;
     transform: translateY(-50%);
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
-    color: #f2ad4e;
+    color: #6a1b9a;
     background-color: #ffffff;
     padding: 0 0.5rem;
+
+    @media (max-width: 1200px) {
+      font-size: 14px;
+    }
   }
 
   // Filled variant 的浮動標籤背景
@@ -77,7 +81,7 @@
 .select {
   padding: 8px 12px;
   padding-right: 2.5rem; // 為箭頭留空間
-  font-size: 16px;
+  font-size: 24px;
   line-height: 1.5;
   border-radius: 0.5rem;
   transition: all 0.2s ease-in-out;
@@ -88,6 +92,10 @@
   cursor: pointer;
   appearance: none; // 移除預設樣式
   background-color: #ffffff;
+
+  @media (max-width: 1200px) {
+    font-size: 16px;
+  }
 
   &:focus {
     outline: none;
@@ -124,17 +132,17 @@
 
   // ========== Outlined 樣式 ==========
   &.outlined {
-    border: 2px solid #f2ad4e;
+    border: 2px solid #9e2ae7;
     background-color: #ffffff;
 
     &:hover:not(:disabled) {
-      border-color: #ff9500;
-      box-shadow: 0 0 0 2px rgba(242, 173, 78, 0.1);
+      border-color: #6a1b9a;
+      box-shadow: 0 0 0 2px rgba(206, 72, 255, 0.1);
     }
 
     &:focus {
-      border-color: #ff9500;
-      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.2);
+      border-color: #6a1b9a;
+      box-shadow: 0 0 0 4px rgba(206, 72, 255, 0.2);
     }
   }
 
@@ -200,16 +208,20 @@
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #f2ad4e;
-  font-size: 0.75rem;
+  color: #9e2ae7;
+  font-size: 20px;
   transition: all 0.2s ease-in-out;
   z-index: 1;
+
+  @media (max-width: 1200px) {
+    font-size: 16px;
+  }
 }
 
 // 當 select 聚焦時，箭頭旋轉
 .selectWrapper:has(.select:focus) .arrow {
   transform: translateY(-50%);
-  color: #ff9500;
+  color: #9e2ae7;
 }
 
 // Disabled 時的箭頭顏色
@@ -245,88 +257,4 @@
   margin-top: 0.25rem;
   font-family: 'Noto Sans TC', sans-serif;
   opacity: 0.8;
-}
-
-// ========== Dark Mode（可選） ==========
-@media (prefers-color-scheme: dark) {
-  .label {
-    color: #ffed6d;
-  }
-
-  .floatingLabel {
-    .label {
-      color: #999999;
-    }
-
-    &.labelActive .label {
-      color: #ffed6d;
-      background-color: #1f2937;
-    }
-  }
-
-  .select {
-    &.outlined {
-      background-color: #1f2937;
-      border-color: #f2ad4e;
-      color: #ffffff;
-
-      &:hover:not(:disabled) {
-        border-color: #ffed6d;
-      }
-
-      &:focus {
-        border-color: #ffed6d;
-        box-shadow: 0 0 0 4px rgba(255, 237, 109, 0.2);
-      }
-    }
-
-    &.filled {
-      background-color: #374151;
-      border-bottom-color: #f2ad4e;
-      color: #ffffff;
-
-      &:hover:not(:disabled) {
-        background-color: #4b5563;
-        border-bottom-color: #ffed6d;
-      }
-
-      &:focus {
-        background-color: #1f2937;
-        border-bottom-color: #ffed6d;
-      }
-    }
-
-    &.disabled,
-    &:disabled {
-      background-color: #111827;
-      color: #6b7280;
-    }
-
-    option {
-      background-color: #1f2937;
-      color: #ffffff;
-    }
-
-    // Dark mode 下浮動標籤的 option 顏色
-    &.withFloatingLabel option {
-      color: #ffffff;
-    }
-  }
-
-  .floatingLabel.labelActive .select.outlined ~ .label,
-  .floatingLabel.labelActive .select.filled ~ .label {
-    background-color: #1f2937;
-  }
-
-  .arrow {
-    color: #f2ad4e;
-  }
-
-  .selectWrapper:has(.select:focus) .arrow {
-    color: #ffed6d;
-  }
-
-  .helperText {
-    color: #f2ad4e;
-  }
 }

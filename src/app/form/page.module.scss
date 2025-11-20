@@ -3,7 +3,7 @@
   display: none;
   width: 400px;
   min-height: 100vh;
-  background-color: rgba(252, 242, 195, 0.5);
+  background-color: rgba(206, 72, 255, 0.5);
   padding: 32px 24px;
   position: sticky;
   top: 0;
@@ -75,11 +75,11 @@
 }
 
 .form {
-  width: 90%;
+  width: 95%;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  padding: 32px 24px;
+  padding: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -97,7 +97,7 @@
   span {
     font-family: 'Luckiest Guy' !important;
     margin-bottom: -0.5rem;
-    font-size: 24px;
+    font-size: 32px;
     letter-spacing: 0.1rem;
   }
 }
@@ -108,21 +108,21 @@
   flex-direction: column;
   gap: 16px;
   padding-bottom: 16px;
-  border-bottom: 2px solid #f2ad4e;
+  border-bottom: 4px solid #6a1b9a;
 }
 
 .userInfo {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  font-size: 14px;
-  color: #666;
+  font-size: 18px;
+  color: #333;
 
   span {
-    background-color: #fcf2c3;
+    background-color: rgba(206, 72, 255, 0.2);
     padding: 6px 12px;
     border-radius: 6px;
-    font-weight: 500;
+    font-weight: 700;
   }
 }
 
@@ -143,10 +143,10 @@
 .conceptMap {
   display: block;
   cursor: pointer;
-  flex: 1;
+  // flex: 1;
 
   @media (min-width: 1200px) {
-    max-width: 45%;
+    width: 60%;
   }
 }
 
@@ -155,37 +155,37 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 1;
+  // flex: 1;
 
   @media (min-width: 1200px) {
-    max-width: 55%;
+    width: 40%;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
-    color: #8b4513;
+    color: #6a1b9a;
     margin: 0;
   }
 }
 
 // 評分說明
 .instructions {
-  background-color: #fff9e6;
+  background-color: rgba(206, 72, 255, 0.2);
   padding: 16px;
   border-radius: 8px;
-  border-left: 4px solid #f2ad4e;
+  border-left: 4px solid #9e2ae7;
 
   h2 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    color: #8b4513;
+    color: #6a1b9a;
     margin: 0 0 8px 0;
   }
 
   p {
-    font-size: 14px;
-    color: #666;
+    font-size: 18px;
+    color: #333;
     margin: 0;
     line-height: 1.6;
   }
@@ -193,21 +193,21 @@
 
 // 文字問題
 .textQuestion {
-  background-color: #fff9e6;
+  background-color: rgba(206, 72, 255, 0.2);
   padding: 16px;
   border-radius: 8px;
-  border-left: 4px solid #f2ad4e;
+  border-left: 4px solid #9e2ae7;
 
   h2 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    color: #8b4513;
+    color: #6a1b9a;
     margin: 0 0 8px 0;
   }
 
   p {
-    font-size: 14px;
-    color: #666;
+    font-size: 18px;
+    color: #333;
     margin: 0;
     line-height: 1.6;
   }
@@ -225,9 +225,9 @@
 .textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #f2ad4e;
+  border: 2px solid #9e2ae7;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 24px;
   font-family: 'Noto Sans TC', sans-serif;
   color: #333;
   background-color: white;
@@ -235,10 +235,14 @@
   min-height: 120px;
   transition: all 0.2s ease;
 
+  @media (max-width: 1200px) {
+    font-size: 16px;
+  }
+
   &:focus {
     outline: none;
-    border-color: #ff9500;
-    box-shadow: 0 0 0 3px rgba(242, 173, 78, 0.1);
+    border-color: #6a1b9a;
+    box-shadow: 0 0 0 3px rgba(206, 72, 255, 0.1);
   }
 
   &::placeholder {
@@ -251,18 +255,18 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: linear-gradient(135deg, #fff9e6 0%, #fcf2c3 100%);
+  background: linear-gradient(135deg, rgba(206, 72, 255, 0.1) 0%, rgba(206, 72, 255, 0.2) 100%);
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 13px;
-  color: #666;
+  font-size: 16px;
+  color: #333;
   font-family: 'Noto Sans TC', sans-serif;
-  border: 1px solid #f2ad4e;
+  border: 1px solid #6a1b9a;
   align-self: flex-end;
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(242, 173, 78, 0.2);
+  box-shadow: 0 2px 8px rgba(206, 72, 255, 0.1);
 
   // 漸變背景動畫
   &::before {
@@ -272,22 +276,25 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(242, 173, 78, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(206, 72, 255, 0.3), transparent);
     animation: shimmer 3s infinite;
   }
 
   .count {
-    font-size: 16px;
+    font-size: 24px;
     font-weight: 700;
-    color: #f2ad4e;
+    color: #9e2ae7;
     position: relative;
     z-index: 1;
     display: inline-block;
     animation: countPulse 0.3s ease;
+    font-family: 'Luckiest Guy';
+    letter-spacing: 1px;
+    margin-bottom: -0.5rem;
   }
 
   .fire {
-    font-size: 18px;
+    font-size: 28px;
     animation: fireWave 0.6s ease-in-out;
     display: inline-block;
   }
@@ -307,13 +314,11 @@
     background-size: 200% 200%;
     animation: gradientShift 1s ease infinite, shake 0.5s ease;
     border-color: #ff9500;
-    box-shadow:
-      0 0 20px rgba(255, 149, 0, 0.6),
-      0 0 40px rgba(255, 149, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 149, 0, 0.6), 0 0 40px rgba(255, 149, 0, 0.4);
 
     .count {
       color: white;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(206, 72, 255, 0.3);
       animation: glow 0.8s ease-in-out infinite;
     }
   }
@@ -518,7 +523,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f2ad4e;
+  background-color: #9e2ae7;
   color: white;
   border: none;
   border-radius: 50%;
@@ -527,7 +532,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #ff9500;
+    background-color: #6a1b9a;
   }
 }
 

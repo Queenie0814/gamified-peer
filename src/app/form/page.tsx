@@ -225,7 +225,8 @@ function FormContent() {
 
     try {
       // 計算概念圖總分
-      const conceptMapTotalScore = ratings.completeness + ratings.accuracy + ratings.richness + ratings.referability + recommendation;
+      const conceptMapTotalScore =
+        ratings.completeness + ratings.accuracy + ratings.richness + ratings.referability + recommendation;
 
       // 計算個人積分
       const personalScore = calculatePersonalScore();
@@ -366,7 +367,11 @@ function FormContent() {
                   {/* 文字問題 */}
                   <div className={styles.textQuestion}>
                     <h2>這份作品最大的優點是什麼？</h2>
-                    <p>請詳細描述這份概念圖的優點與亮點（字數越多可獲得更多積分）</p>
+                    <p>
+                      請詳細描述這份概念圖的優點與亮點
+                      <br />
+                      （字數越多可獲得更多積分）
+                    </p>
                   </div>
                   <div className={styles.textareaContainer}>
                     <textarea
@@ -393,9 +398,7 @@ function FormContent() {
                         {advantage.length}
                       </span>
                       <span> 字</span>
-                      {advantage.length >= 20 && advantage.length % 20 < 10 && (
-                        <span className={styles.fire}>🔥</span>
-                      )}
+                      {advantage.length >= 20 && advantage.length % 20 < 10 && <span className={styles.fire}>🔥</span>}
                     </div>
                     {errors.advantage && <p className={styles.errorText}>{errors.advantage}</p>}
                   </div>

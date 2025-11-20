@@ -41,46 +41,16 @@
 
   // ========== 顏色變體 ==========
   &.primary {
-    background-color: #f2ad4e;
+    background-color: #9e2ae7;
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: #ff9500;
-      box-shadow: 0 4px 12px rgba(242, 173, 78, 0.4);
+      background-color: #6a1b9a;
+      box-shadow: 0 4px 12px rgba(206, 72, 255, 0.5);
     }
 
     &:focus:not(:disabled) {
-      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.3);
-    }
-  }
-
-  &.secondary {
-    background-color: #fcf2c3;
-    color: #8b4513;
-
-    &:hover:not(:disabled) {
-      background-color: #fff9e6;
-      box-shadow: 0 2px 8px rgba(242, 173, 78, 0.2);
-    }
-
-    &:focus:not(:disabled) {
-      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.2);
-    }
-  }
-
-  &.outlined {
-    background-color: transparent;
-    color: #f2ad4e;
-    border: 2px solid #f2ad4e;
-
-    &:hover:not(:disabled) {
-      background-color: #fcf2c3;
-      border-color: #ff9500;
-      color: #ff9500;
-    }
-
-    &:focus:not(:disabled) {
-      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.2);
+      box-shadow: 0 0 0 4px rgba(206, 72, 255, 0.5);
     }
   }
 

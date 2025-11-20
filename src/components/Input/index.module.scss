@@ -55,11 +55,15 @@
   &.labelActive .label {
     top: 0;
     transform: translateY(-50%);
-    font-size: 0.75rem;
+    font-size: 16px;
     font-weight: 600;
-    color: #f2ad4e;
-    background-color: #ffffff;
+    color: #6a1b9a;
+    background-color: white;
     padding: 0 0.5rem;
+
+    @media (max-width: 1200px) {
+      font-size: 14px;
+    }
   }
 
   // Filled variant 的浮動標籤背景
@@ -76,7 +80,7 @@
 // 輸入框基本樣式
 .input {
   padding: 8px 12px;
-  font-size: 16px;
+  font-size: 24px;
   line-height: 1.5;
   border-radius: 0.5rem;
   transition: all 0.2s ease-in-out;
@@ -84,6 +88,10 @@
   font-family: 'Noto Sans TC', sans-serif;
   position: relative;
   z-index: 0;
+
+  @media (max-width: 1200px) {
+    font-size: 16px;
+  }
 
   &:focus {
     outline: none;
@@ -102,17 +110,17 @@
 
   // ========== Outlined 樣式 ==========
   &.outlined {
-    border: 2px solid #f2ad4e;
+    border: 2px solid #9e2ae7;
     background-color: #ffffff;
 
     &:hover:not(:disabled) {
-      border-color: #ff9500;
-      box-shadow: 0 0 0 2px rgba(242, 173, 78, 0.1);
+      border-color: #6a1b9a;
+      box-shadow: 0 0 0 2px rgba(206, 72, 255, 0.1);
     }
 
     &:focus {
-      border-color: #ff9500;
-      box-shadow: 0 0 0 4px rgba(242, 173, 78, 0.2);
+      border-color: #6a1b9a;
+      box-shadow: 0 0 0 4px rgba(206, 72, 255, 0.2);
     }
   }
 
@@ -199,70 +207,4 @@
   margin-top: 0.25rem;
   font-family: 'Noto Sans TC', sans-serif;
   opacity: 0.8;
-}
-
-// ========== Dark Mode（可選） ==========
-@media (prefers-color-scheme: dark) {
-  .label {
-    color: #ffed6d;
-  }
-
-  .floatingLabel {
-    .label {
-      color: #999999;
-    }
-
-    &.labelActive .label {
-      color: #ffed6d;
-      background-color: #1f2937;
-    }
-  }
-
-  .input {
-    &.outlined {
-      background-color: #1f2937;
-      border-color: #f2ad4e;
-      color: #ffffff;
-
-      &:hover:not(:disabled) {
-        border-color: #ffed6d;
-      }
-
-      &:focus {
-        border-color: #ffed6d;
-        box-shadow: 0 0 0 4px rgba(255, 237, 109, 0.2);
-      }
-    }
-
-    &.filled {
-      background-color: #374151;
-      border-bottom-color: #f2ad4e;
-      color: #ffffff;
-
-      &:hover:not(:disabled) {
-        background-color: #4b5563;
-        border-bottom-color: #ffed6d;
-      }
-
-      &:focus {
-        background-color: #1f2937;
-        border-bottom-color: #ffed6d;
-      }
-    }
-
-    &.disabled,
-    &:disabled {
-      background-color: #111827;
-      color: #6b7280;
-    }
-  }
-
-  .floatingLabel.labelActive .input.outlined ~ .label,
-  .floatingLabel.labelActive .input.filled ~ .label {
-    background-color: #1f2937;
-  }
-
-  .helperText {
-    color: #f2ad4e;
-  }
 }
