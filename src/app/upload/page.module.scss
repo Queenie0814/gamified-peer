@@ -114,6 +114,27 @@
   }
 }
 
+.loadingMessage {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px;
+  background-color: rgba(206, 72, 255, 0.1);
+  border-radius: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
 .uploadButton {
   width: 100%;
   max-width: 300px;

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import imageCompression from 'browser-image-compression';
 import PageLayout from '@/components/PageLayout';
 import Button from '@/components/Button';
 import Select from '@/components/Select';
@@ -13,6 +14,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [uploadResult, setUploadResult] = useState<{
     success: boolean;
     message: string;
@@ -43,8 +45,23 @@ export default function UploadPage() {
     setUploadResult(null);
 
     try {
+      // 壓縮圖片
+      setLoadingMessage('正在壓縮圖片...');
+      const options = {
+        maxSizeMB: 2, // 最大檔案大小 2MB
+        maxWidthOrHeight: 1920, // 最大寬度或高度
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(selectedFile, options);
+
+      console.log('原始檔案大小:', (selectedFile.size / 1024 / 1024).toFixed(2), 'MB');
+      console.log('壓縮後大小:', (compressedFile.size / 1024 / 1024).toFixed(2), 'MB');
+
+      setLoadingMessage('正在上傳...');
+
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append('file', compressedFile);
       formData.append('group', groupNumber);
 
       const response = await fetch('/api/upload', {
@@ -144,6 +161,11 @@ export default function UploadPage() {
             <div className={`${styles.result} ${uploadResult.success ? styles.success : styles.error}`}>
               {uploadResult.message}
             </div>
+          )}
+
+          {/* 載入訊息 */}
+          {isUploading && loadingMessage && (
+            <div className={styles.loadingMessage}>{loadingMessage}</div>
           )}
 
           {/* 上傳按鈕 */}
