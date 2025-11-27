@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 import sharp from 'sharp';
 import { getImageFilename } from '@/lib/groupUtils';
 
@@ -36,14 +35,17 @@ export async function POST(request: NextRequest) {
       })
       .toBuffer();
 
-    // 設定儲存路徑：public/image/group-{星期幾}-{組別}.jpeg
+    // 設定檔名：group-{星期幾}-{組別}.jpeg
     const filename = getImageFilename(groupNumber);
-    const filepath = path.join(process.cwd(), 'public', 'image', filename);
 
-    // 寫入轉換後的檔案
-    await writeFile(filepath, convertedBuffer);
+    // 上傳到 Vercel Blob Storage
+    const blob = await put(filename, convertedBuffer, {
+      access: 'public',
+      contentType: 'image/jpeg',
+    });
 
-    console.log(`✅ 圖片已轉換為 JPEG 並上傳成功：${filename}`);
+    console.log(`✅ 圖片已上傳到 Vercel Blob：${filename}`);
+    console.log(`   Blob URL：${blob.url}`);
     console.log(`   原始格式：${fileType}`);
     console.log(`   原始大小：${(buffer.length / 1024).toFixed(2)} KB`);
     console.log(`   轉換後大小：${(convertedBuffer.length / 1024).toFixed(2)} KB`);
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: '上傳成功（已自動轉換為 JPEG）',
       filename: filename,
-      path: `/image/${filename}`,
+      url: blob.url,
       originalFormat: fileType,
       originalSize: `${(buffer.length / 1024).toFixed(2)} KB`,
       convertedSize: `${(convertedBuffer.length / 1024).toFixed(2)} KB`,

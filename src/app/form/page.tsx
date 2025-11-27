@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -13,7 +13,6 @@ import RatingInput from '@/components/RatingInput';
 import Button from '@/components/Button';
 import StarRating from '@/components/StarRating';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { getImagePath } from '@/lib/groupUtils';
 
 import styles from './page.module.scss';
 
@@ -25,11 +24,28 @@ function FormContent() {
   const [showConceptMap, setShowConceptMap] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [step, setStep] = useState(1); // 當前步驟
+  const [imageUrl, setImageUrl] = useState<string>(''); // 圖片 URL
 
   // 從 URL 獲取參數
   const group = searchParams.get('group') || '';
   const name = searchParams.get('name') || '';
   const studentId = searchParams.get('student_id') || '';
+
+  // 獲取圖片 URL
+  useEffect(() => {
+    if (group) {
+      fetch(`/api/image?group=${group}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setImageUrl(data.url);
+          }
+        })
+        .catch((error) => {
+          console.error('獲取圖片失敗:', error);
+        });
+    }
+  }, [group]);
 
   // 評分資料
   const [ratings, setRatings] = useState({
@@ -327,14 +343,18 @@ function FormContent() {
             {/* 概念圖預覽 */}
             <div className={styles.conceptMap} onClick={() => setShowConceptMap(true)}>
               <div className={styles.conceptMapPreview}>
-                <Image
-                  src={getImagePath(group)}
-                  alt="概念圖"
-                  width={600}
-                  height={400}
-                  style={{ objectFit: 'contain', cursor: 'pointer' }}
-                  unoptimized
-                />
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt="概念圖"
+                    width={600}
+                    height={400}
+                    style={{ objectFit: 'contain', cursor: 'pointer' }}
+                    unoptimized
+                  />
+                ) : (
+                  <div style={{ padding: '40px', textAlign: 'center' }}>載入中...</div>
+                )}
               </div>
             </div>
 
@@ -571,14 +591,18 @@ function FormContent() {
                 className={`${styles.imageContainer} ${isZoomed ? styles.zoomed : ''}`}
                 onClick={() => setIsZoomed(!isZoomed)}
               >
-                <Image
-                  src={getImagePath(group)}
-                  alt="概念圖"
-                  width={800}
-                  height={600}
-                  style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
-                  unoptimized
-                />
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt="概念圖"
+                    width={800}
+                    height={600}
+                    style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
+                    unoptimized
+                  />
+                ) : (
+                  <div style={{ padding: '40px', textAlign: 'center' }}>載入中...</div>
+                )}
               </div>
             </div>
           </div>
