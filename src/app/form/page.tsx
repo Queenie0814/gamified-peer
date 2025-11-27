@@ -34,11 +34,16 @@ function FormContent() {
   // 獲取圖片 URL
   useEffect(() => {
     if (group) {
-      fetch(`/api/image?group=${group}`)
+      // 加上時間戳記避免緩存
+      fetch(`/api/image?group=${group}&t=${Date.now()}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            setImageUrl(data.url);
+            // 在 Blob URL 加上時間戳記避免瀏覽器緩存
+            setImageUrl(`${data.url}?t=${Date.now()}`);
+            console.log('載入圖片 URL:', data.url);
+          } else {
+            console.error('獲取圖片失敗:', data.error);
           }
         })
         .catch((error) => {

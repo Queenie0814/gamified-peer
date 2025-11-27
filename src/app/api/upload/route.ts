@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
       contentType: 'image/jpeg',
       addRandomSuffix: false, // 不添加隨機後綴
       allowOverwrite: true, // 允許覆蓋已存在的檔案
+      cacheControlMaxAge: 0, // 不緩存，每次都獲取最新的圖片
     });
 
     console.log(`✅ 圖片已上傳到 Vercel Blob：${filename}`);
