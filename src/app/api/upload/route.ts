@@ -3,6 +3,15 @@ import { put } from '@vercel/blob';
 import sharp from 'sharp';
 import { getImageFilename } from '@/lib/groupUtils';
 
+// 設定 body size limit (預設 4.5MB，對於圖片來說應該足夠)
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -61,9 +70,21 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('上傳失敗:', error);
+
+    // 確保返回 JSON 格式的錯誤訊息
+    const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+
     return NextResponse.json(
-      { error: '上傳失敗：' + (error as Error).message },
-      { status: 500 }
+      {
+        success: false,
+        error: '上傳失敗：' + errorMessage
+      },
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 }
