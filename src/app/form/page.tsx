@@ -13,6 +13,7 @@ import RatingInput from '@/components/RatingInput';
 import Button from '@/components/Button';
 import StarRating from '@/components/StarRating';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { getImagePath } from '@/lib/groupUtils';
 
 import styles from './page.module.scss';
 
@@ -327,11 +328,12 @@ function FormContent() {
             <div className={styles.conceptMap} onClick={() => setShowConceptMap(true)}>
               <div className={styles.conceptMapPreview}>
                 <Image
-                  src="/example.jpeg"
+                  src={getImagePath(group)}
                   alt="概念圖"
                   width={600}
                   height={400}
                   style={{ objectFit: 'contain', cursor: 'pointer' }}
+                  unoptimized
                 />
               </div>
             </div>
@@ -570,11 +572,12 @@ function FormContent() {
                 onClick={() => setIsZoomed(!isZoomed)}
               >
                 <Image
-                  src="/example.jpeg"
+                  src={getImagePath(group)}
                   alt="概念圖"
                   width={800}
                   height={600}
                   style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
+                  unoptimized
                 />
               </div>
             </div>

@@ -8,6 +8,7 @@ import PageLayout from '@/components/PageLayout';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
 import Button from '@/components/Button';
+import { getGroupOptions } from '@/lib/groupUtils';
 
 import styles from './page.module.scss';
 
@@ -46,15 +47,7 @@ export default function Home() {
       helperText: '',
       fullWidth: true,
       labelStyle: 'floating' as const,
-      options: [
-        { value: '1', label: '第一組' },
-        { value: '2', label: '第二組' },
-        { value: '3', label: '第三組' },
-        { value: '4', label: '第四組' },
-        { value: '5', label: '第五組' },
-        { value: '6', label: '第六組' },
-        { value: '7', label: '第七組' },
-      ],
+      options: getGroupOptions(), // 動態產生組別選項
     },
   ]);
 
