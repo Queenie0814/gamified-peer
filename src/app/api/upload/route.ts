@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
     const blob = await put(filename, convertedBuffer, {
       access: 'public',
       contentType: 'image/jpeg',
+      addRandomSuffix: false, // 不添加隨機後綴
+      allowOverwrite: true, // 允許覆蓋已存在的檔案
     });
 
     console.log(`✅ 圖片已上傳到 Vercel Blob：${filename}`);
