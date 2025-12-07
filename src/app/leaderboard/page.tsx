@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import classNames from 'classnames';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
 
@@ -215,9 +216,14 @@ function LeaderboardContent() {
         {lastUpdate && (
           <div className={styles.lastUpdate}>
             <span>最後更新時間：{lastUpdate}</span>
-            <button onClick={handleRefresh} disabled={refreshing} className={styles.refreshButton}>
-              {refreshing ? '更新中...' : '更新排行'}
-            </button>
+            <div className={styles.buttonGroup}>
+              <button onClick={handleRefresh} disabled={refreshing} className={styles.refreshButton}>
+                {refreshing ? '更新中...' : '更新排行'}
+              </button>
+              <Link href="/" className={styles.homeButton}>
+                <span>繼續評分</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>

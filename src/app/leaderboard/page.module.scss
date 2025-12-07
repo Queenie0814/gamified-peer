@@ -432,12 +432,24 @@
     font-size: 14px;
   }
 
-  .refreshButton {
+  .buttonGroup {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      width: 100%;
+      gap: 8px;
+    }
+  }
+
+  .refreshButton,
+  .homeButton {
     padding: 8px 16px;
     border: 2px solid transparent;
     border-radius: 8px;
     background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #9e2ae7 0%, #f2ad4e 100%) border-box;
-    color: #9e2ae7;
     font-family: 'Noto Sans TC';
     font-size: 18px;
     font-weight: 700;
@@ -446,21 +458,47 @@
 
     @media (max-width: 768px) {
       font-size: 14px;
+      width: 100%;
     }
 
     &:hover:not(:disabled) {
       background: linear-gradient(135deg, #9e2ae7 0%, #f2ad4e 100%);
-      color: white;
       transform: scale(1.05);
     }
 
     &:active:not(:disabled) {
       transform: scale(0.95);
     }
+  }
+
+  .refreshButton {
+    color: #9e2ae7;
+    border: none;
+
+    &:hover:not(:disabled) {
+      color: white;
+    }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  }
+
+  .homeButton {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      color: #9e2ae7;
+    }
+
+    &:hover {
+      span {
+        color: white;
+      }
     }
   }
 }

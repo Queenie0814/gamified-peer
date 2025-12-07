@@ -34,6 +34,7 @@ interface Pagination {
 export default function SurveyDataPage() {
   const [data, setData] = useState<SurveyData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
     limit: 50,
@@ -45,11 +46,13 @@ export default function SurveyDataPage() {
   const [sortBy, setSortBy] = useState('submitTime');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedRow, setSelectedRow] = useState<SurveyData | null>(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, search, sortBy, sortOrder]);
+  }, [pagination.page, search, sortBy, sortOrder, startDate, endDate]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -63,6 +66,14 @@ export default function SurveyDataPage() {
 
       if (search) {
         params.append('search', search);
+      }
+
+      if (startDate) {
+        params.append('startDate', startDate);
+      }
+
+      if (endDate) {
+        params.append('endDate', endDate);
       }
 
       const response = await fetch(`/api/admin/survey-data?${params}`);
@@ -98,51 +109,90 @@ export default function SurveyDataPage() {
     setPagination({ ...pagination, page: newPage });
   };
 
-  const exportToCSV = () => {
-    const headers = [
-      'ID',
-      '學生ID',
-      '學生姓名',
-      '組別',
-      '完整性',
-      '準確性',
-      '豐富性',
-      '參考性',
-      '概念圖總分',
-      '優點',
-      '建議',
-      '技能反思',
-      '認知反思',
-      '推薦度',
-      '個人分數',
-      '提交時間',
-    ];
+  const exportToCSV = async () => {
+    setExporting(true);
+    try {
+      // 取得所有資料（不分頁）
+      const params = new URLSearchParams({
+        page: '1',
+        limit: '999999', // 取得所有資料
+        sortBy,
+        sortOrder,
+      });
 
-    const csvData = data.map((row) => [
-      row.id,
-      row.studentId,
-      row.studentName,
-      row.groupName,
-      row.completeness,
-      row.accuracy,
-      row.richness,
-      row.referability,
-      row.conceptMapTotalScore,
-      `"${row.advantage.replace(/"/g, '""')}"`,
-      `"${row.suggest.replace(/"/g, '""')}"`,
-      `"${row.skillReflection.replace(/"/g, '""')}"`,
-      `"${row.cognitiveReflection.replace(/"/g, '""')}"`,
-      row.recommend,
-      row.personalScore,
-      dayjs(row.submitTime).format('YYYY-MM-DD HH:mm:ss'),
-    ]);
+      if (search) {
+        params.append('search', search);
+      }
 
-    const csv = [headers.join(','), ...csvData.map((row) => row.join(','))].join('\n');
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `survey_data_${dayjs().format('YYYY-MM-DD')}.csv`;
-    link.click();
+      if (startDate) {
+        params.append('startDate', startDate);
+      }
+
+      if (endDate) {
+        params.append('endDate', endDate);
+      }
+
+      const response = await fetch(`/api/admin/survey-data?${params}`);
+      const result = await response.json();
+
+      if (!result.success) {
+        alert('取得資料失敗');
+        return;
+      }
+
+      const allData = result.data;
+
+      const headers = [
+        'ID',
+        '學生ID',
+        '學生姓名',
+        '組別',
+        '完整性',
+        '準確性',
+        '豐富性',
+        '參考性',
+        '概念圖總分',
+        '優點',
+        '建議',
+        '技能反思',
+        '認知反思',
+        '推薦度',
+        '個人分數',
+        '提交時間',
+      ];
+
+      const csvData = allData.map((row: SurveyData) => [
+        row.id,
+        row.studentId,
+        row.studentName,
+        row.groupName,
+        row.completeness,
+        row.accuracy,
+        row.richness,
+        row.referability,
+        row.conceptMapTotalScore,
+        `"${(row.advantage || '').replace(/"/g, '""').replace(/\n/g, ' ').replace(/\r/g, '')}"`,
+        `"${(row.suggest || '').replace(/"/g, '""').replace(/\n/g, ' ').replace(/\r/g, '')}"`,
+        `"${(row.skillReflection || '').replace(/"/g, '""').replace(/\n/g, ' ').replace(/\r/g, '')}"`,
+        `"${(row.cognitiveReflection || '').replace(/"/g, '""').replace(/\n/g, ' ').replace(/\r/g, '')}"`,
+        row.recommend,
+        row.personalScore,
+        dayjs(row.submitTime).format('YYYY-MM-DD HH:mm:ss'),
+      ]);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const csv = [headers.join(','), ...csvData.map((row: any[]) => row.join(','))].join('\n');
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `survey_data_${dayjs().format('YYYY-MM-DD')}.csv`;
+      link.click();
+    } catch (error) {
+      console.error('匯出失敗:', error);
+      alert('匯出失敗，請稍後再試');
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -179,8 +229,49 @@ export default function SurveyDataPage() {
             </button>
           )}
         </form>
-        <button onClick={exportToCSV} className={styles.exportButton} disabled={data.length === 0}>
-          匯出 CSV
+
+        <div className={styles.dateFilter}>
+          <label>
+            開始日期:
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setPagination({ ...pagination, page: 1 });
+              }}
+              className={styles.dateInput}
+            />
+          </label>
+          <label>
+            結束日期:
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setPagination({ ...pagination, page: 1 });
+              }}
+              className={styles.dateInput}
+            />
+          </label>
+          {(startDate || endDate) && (
+            <button
+              type="button"
+              onClick={() => {
+                setStartDate('');
+                setEndDate('');
+                setPagination({ ...pagination, page: 1 });
+              }}
+              className={styles.clearButton}
+            >
+              清除日期
+            </button>
+          )}
+        </div>
+
+        <button onClick={exportToCSV} className={styles.exportButton} disabled={exporting || pagination.total === 0}>
+          {exporting ? '匯出中...' : `匯出 CSV (共 ${pagination.total} 筆)`}
         </button>
       </div>
 

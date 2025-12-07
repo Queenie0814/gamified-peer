@@ -59,6 +59,42 @@
   }
 }
 
+.dateFilter {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.dateInput {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  color: black;
+  background-color: white;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #4a90e2;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+}
+
 .searchButton,
 .clearButton,
 .exportButton {

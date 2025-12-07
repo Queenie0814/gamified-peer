@@ -9,19 +9,37 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || '';
     const sortBy = searchParams.get('sortBy') || 'submitTime';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
     const skip = (page - 1) * limit;
 
     // 建構搜尋條件
-    const where = search
-      ? {
-          OR: [
-            { studentId: { contains: search, mode: 'insensitive' as const } },
-            { studentName: { contains: search, mode: 'insensitive' as const } },
-            { groupName: { contains: search, mode: 'insensitive' as const } },
-          ],
-        }
-      : {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {};
+
+    // 文字搜尋條件
+    if (search) {
+      where.OR = [
+        { studentId: { contains: search, mode: 'insensitive' as const } },
+        { studentName: { contains: search, mode: 'insensitive' as const } },
+        { groupName: { contains: search, mode: 'insensitive' as const } },
+      ];
+    }
+
+    // 日期範圍條件
+    if (startDate || endDate) {
+      where.submitTime = {};
+      if (startDate) {
+        where.submitTime.gte = new Date(startDate);
+      }
+      if (endDate) {
+        // 將結束日期設為當天的 23:59:59
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        where.submitTime.lte = endDateTime;
+      }
+    }
 
     // 獲取總數
     const total = await prisma.surveyResponse.count({ where });
