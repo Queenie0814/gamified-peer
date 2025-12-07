@@ -4,13 +4,7 @@ import sharp from 'sharp';
 import { getImageFilename } from '@/lib/groupUtils';
 
 // 設定 body size limit (預設 4.5MB，對於圖片來說應該足夠)
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};
+export const maxDuration = 60; // 最大執行時間 60 秒
 
 export async function POST(request: NextRequest) {
   try {
