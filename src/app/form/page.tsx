@@ -299,7 +299,7 @@ function FormContent() {
         setLoadingMessage('正在轉址到排行榜...');
 
         // 轉址到排行榜
-        router.push(`/leaderboard?student_id=${studentId}&date=${dayjs().format('YYYY-MM-DD')}`);
+        router.push(`/leaderboard?student_id=${studentId}`);
       } else {
         console.error('❌ 儲存失敗：', result.error);
         alert('提交失敗：' + result.error);

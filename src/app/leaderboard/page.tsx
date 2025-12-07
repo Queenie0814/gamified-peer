@@ -61,7 +61,6 @@ function LeaderboardContent() {
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const searchParams = useSearchParams();
   const studentId = searchParams.get('student_id');
-  const currentDate = searchParams.get('date');
 
   const getGroupDisplayName = (groupNumber: string) => {
     const numberMap: { [key: string]: string } = {
@@ -87,7 +86,7 @@ function LeaderboardContent() {
     }
 
     try {
-      const response = await fetch(`/api/get-leaderboard?student_id=${studentId}&date=${currentDate}`);
+      const response = await fetch(`/api/get-leaderboard?student_id=${studentId}`);
       const data: LeaderboardData = await response.json();
 
       console.log('排行榜資料:', data);
